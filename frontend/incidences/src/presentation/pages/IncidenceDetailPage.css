@@ -1,0 +1,14 @@
+/* Styles for the h2 title on the detail page */
+.incidence-detail-page h2 {
+  margin-bottom: 1.5rem; /* Add some space below */
+  padding-right: 1rem; /* Add some padding to the right edge */
+  /* The h2 will naturally flow to the left */
+}
+
+/* Styles for the fixed action buttons on the detail page */
+.detail-page-actions {
+  position: fixed;
+  top: 8.5rem; /* Adjust as needed, similar to back button */
+  right: 2rem; /* Adjust as needed, similar to back button */
+  z-index: 1000; /* Ensure it's on top of everything */
+}

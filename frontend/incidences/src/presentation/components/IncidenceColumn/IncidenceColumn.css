@@ -1,0 +1,107 @@
+.status-column {
+  flex: 1;
+  position: relative; /* Needed for the pseudo-element */
+  padding: 1.5rem;
+  /* Background, filter, etc., are now in the ::before pseudo-element */
+}
+
+.status-column::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1; /* Place the background behind the content */
+  background: var(--color-card-bg);
+  border-radius: var(--border-radius);
+  backdrop-filter: blur(var(--backdrop-blur));
+  -webkit-backdrop-filter: blur(var(--backdrop-blur));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.column-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 3px solid;
+  white-space: nowrap;
+}
+
+.column-title a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.column-title a:hover {
+  color: var(--color-text) !important; /* Override specific colors on hover */
+}
+
+.created .column-title {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.pending .column-title {
+  color: var(--color-quaternary);
+  border-color: var(--color-quaternary);
+}
+
+.in-progress .column-title {
+  color: var(--color-secondary);
+  border-color: var(--color-secondary);
+}
+
+.resolved .column-title {
+  color: var(--color-tertiary);
+  border-color: var(--color-tertiary);
+}
+
+.created .incidencia-card {
+  border-left: 5px solid var(--color-primary);
+}
+
+.pending .incidencia-card {
+  border-left: 5px solid var(--color-quaternary);
+}
+
+.in-progress .incidencia-card {
+  border-left: 5px solid var(--color-secondary);
+}
+
+.resolved .incidencia-card {
+  border-left: 5px solid var(--color-tertiary);
+}
+
+@media (max-width: 768px) {
+  .incidences-list-container {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 1rem; /* Space between cards */
+    padding-bottom: 1rem; /* Space for scrollbar */
+  }
+
+  .incidences-list-container .incidencia-card {
+    flex-shrink: 0;
+    min-width: 250px; /* Adjust as needed */
+    margin-bottom: 0; /* Remove vertical margin */
+  }
+
+  /* Scrollbar styling for the inner container */
+  .incidences-list-container::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .incidences-list-container::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+  }
+
+  .incidences-list-container::-webkit-scrollbar-track {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}

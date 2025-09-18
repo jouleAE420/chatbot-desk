@@ -1,0 +1,13 @@
+.star-rating {
+  margin-bottom: 0.75rem;
+  color: var(--color-secondary);
+}
+
+.star {
+  font-size: 1.2rem;
+  margin-right: 2px;
+}
+
+.star-empty {
+  color: rgba(255, 255, 255, 0.2);
+}

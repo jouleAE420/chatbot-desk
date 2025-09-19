@@ -6,7 +6,10 @@
   margin-bottom: 1rem;
   text-align: left;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  /* NEW: Add a transparent outline for a smooth transition effect */
+  outline: 2px solid transparent;
+  outline-offset: 4px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, outline-color 0.3s ease;
   overflow-wrap: break-word; /* Asegura que el texto largo se ajuste */
   overflow: hidden; /* To contain the hover button */
 }
@@ -75,8 +78,6 @@
   text-transform: uppercase;
 }
 
-
-
 .time-ago {
   font-size: 0.8rem;
   font-weight: 300;
@@ -91,9 +92,11 @@
 
 /* Styles for the card being dragged */
 .incidencia-card.dragging {
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-  transform: scale(1.05);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75);
+  transform: scale(1.05) rotate(3deg);
   z-index: 2000;
+  /* NEW: Use a distinct outline instead of a glow */
+  outline-color: #fff;
 }
 
 

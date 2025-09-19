@@ -27,28 +27,41 @@
 
 /* Color coding for move buttons */
 .action-button-move.-to-pending {
-  color: var(--color-quaternary);
+  background-color: var(--color-quaternary);
   border-color: var(--color-quaternary);
+  color: var(--color-text);
 }
 .action-button-move.-to-pending:hover {
-  background-color: var(--color-quaternary);
-  color: var(--color-bg);
+  background-color: #008ac7; /* Darker quaternary */
+  border-color: #008ac7;
+  color: var(--color-text); /* Asegurar texto blanco */
 }
 
 .action-button-move.-to-progress {
-  color: var(--color-secondary);
+  background-color: var(--color-secondary);
   border-color: var(--color-secondary);
+  color: var(--color-text);
 }
 .action-button-move.-to-progress:hover {
-  background-color: var(--color-secondary);
-  color: var(--color-bg);
+  background-color: #c7a300; /* Darker secondary */
+  border-color: #c7a300;
+  color: var(--color-text); /* Asegurar texto blanco */
 }
 
 .action-button-move.-to-resolved {
-  color: var(--color-tertiary);
+  background-color: var(--color-tertiary);
+  color: var(--color-text);
   border-color: var(--color-tertiary);
 }
 .action-button-move.-to-resolved:hover {
-  background-color: var(--color-tertiary);
-  color: var(--color-bg);
+  background-color: #17c200; /* Darker tertiary */
+  color: var(--color-text); /* Asegurar texto blanco */
+  border-color: #17c200;
+}
+
+@media (max-width: 480px) {
+  .action-button-move {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.5rem;
+  }
 }

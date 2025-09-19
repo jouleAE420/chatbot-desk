@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import type { TicketOptions } from '../../domain/models/incidencia';
 import { StatusType } from '../../domain/models/incidencia';
-import IncidenceCardBase from '../components/IncidenceCard/IncidenceCardBase'; // Use the base component
+import IncidenceCardBase from '../components/IncidenceCard/IncidenceCardBase';
+import useWindowSize from '../utils/useWindowSize'; // Import the hook
 
 interface Props {
   incidencias: TicketOptions[];
-  onUpdateStatus: (id: number, newStatus: StatusType) => void; // Keep for now, passed by App.tsx
+  onUpdateStatus: (id: number, newStatus: StatusType) => void;
 }
 
-// Mapeo de URL a datos y títulos
 const statusMap: { [key: string]: { dataValue: StatusType; title: string } } = {
     created: { dataValue: StatusType.created, title: 'Creadas' },
     pending: { dataValue: StatusType.pending, title: 'Pendientes' },
@@ -20,8 +20,10 @@ const statusMap: { [key: string]: { dataValue: StatusType; title: string } } = {
 const StatusPage: React.FC<Props> = ({ incidencias, onUpdateStatus }) => {
     const { statusKey } = useParams<{ statusKey: string }>();
     const [filteredIncidencias, setFilteredIncidencias] = useState<TicketOptions[]>([]);
+    const navigate = useNavigate();
+    const location = useLocation();
+    const { width } = useWindowSize(); // Use the hook
 
-    // Asegurarse de que la clave de estado exista en el mapa
     const statusInfo = statusKey ? statusMap[statusKey] : undefined;
 
     useEffect(() => {
@@ -45,14 +47,21 @@ const StatusPage: React.FC<Props> = ({ incidencias, onUpdateStatus }) => {
     return (
         <div className={`focused-view ${statusKey}`}>
             <h2 className="column-title">{statusInfo.title}</h2>
-            <Link to="/" className="back-link">← Volver al panel</Link>
+            <Link to="/" className="back-link">
+                {width && width > 768 ? '← Volver al panel' : '←'}
+            </Link>
             <div className="focused-grid">
                 {filteredIncidencias.map(incidencia => (
-                    <IncidenceCardBase
+                    <div
                         key={incidencia.id}
-                        incidencia={incidencia}
-                        onUpdateStatus={onUpdateStatus}
-                    />
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => navigate(`/incidencias/${incidencia.id}`, { state: { from: location.pathname } })}
+                    >
+                        <IncidenceCardBase
+                            incidencia={incidencia}
+                            onUpdateStatus={onUpdateStatus}
+                        />
+                    </div>
                 ))}
             </div>
         </div>

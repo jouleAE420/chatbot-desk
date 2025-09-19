@@ -1,10 +1,10 @@
 import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
 import type { TicketOptions } from '../../../domain/models/incidencia';
 import { StatusType } from '../../../domain/models/incidencia'; // Import StatusType
 import { timeAgo } from '../../utils/date';
 import StarRating from '../StarRating';
 import StatusActionButtons from '../StatusActionButtons';
+import useWindowSize from '../../utils/useWindowSize'; // Import the hook
 import './IncidenceCard.css';
 
 interface Props {
@@ -13,19 +13,8 @@ interface Props {
   onUpdateStatus?: (id: number, newStatus: StatusType) => void; // Add optional prop
 }
 
-
-
 const IncidenceCardBase: React.FC<Props> = ({ incidencia, isDragging = false, onUpdateStatus }) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const handleCardClick = () => {
-    navigate(`/incidencias/${incidencia.id}`, { state: { from: location.pathname } });
-  };
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    e.stopPropagation();
-  };
+  const { width } = useWindowSize(); // Use the hook
 
   const handleMoveClick = (newStatus: StatusType) => {
     if (onUpdateStatus) {
@@ -43,18 +32,12 @@ const IncidenceCardBase: React.FC<Props> = ({ incidencia, isDragging = false, on
       </div>
       <StarRating rating={incidencia.rate} />
       <p className="time-ago">Hace {timeAgo(incidencia.createdAt)}</p>
-      
-      {/* This button is now controlled by CSS to appear on hover */}
-      <button 
-        className="action-button-primary" 
-        onClick={handleCardClick}
-        onMouseDown={handleMouseDown}
-      >
-        Ver detalles
-      </button>
 
-      {onUpdateStatus && (
-        <StatusActionButtons status={incidencia.status} onMoveClick={handleMoveClick} />
+      {/* Conditionally render buttons based on screen size */}
+      {onUpdateStatus && width && width < 769 && (
+        <div onClick={(e) => e.stopPropagation()}>
+          <StatusActionButtons status={incidencia.status} onMoveClick={handleMoveClick} />
+        </div>
       )}
     </div>
   );

@@ -163,4 +163,43 @@
     z-index: 1000;
     backdrop-filter: blur(5px);
   }
+
+  /* Estilos para intensificar los colores de los botones en la barra de acciones móvil */
+  .mobile-actions-bar .action-button-move {
+    background-color: var(--color-primary); /* Usar color primario sólido por defecto */
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
+    backdrop-filter: none; /* Eliminar el desenfoque */
+  }
+
+  .mobile-actions-bar .action-button-move.-to-pending {
+    background-color: var(--color-quaternary); /* Color sólido de la categoría */
+    border-color: var(--color-quaternary);
+  }
+
+  .mobile-actions-bar .action-button-move.-to-progress {
+    background-color: var(--color-secondary); /* Color sólido de la categoría */
+    border-color: var(--color-secondary);
+  }
+
+  .mobile-actions-bar .action-button-move.-to-resolved {
+    background-color: var(--color-tertiary); /* Color sólido de la categoría */
+    border-color: var(--color-tertiary);
+  }
+
+  /* Ajustar los estados hover para que sigan siendo más intensos */
+  .mobile-actions-bar .action-button-move.-to-pending:hover {
+    background-color: #008ac7; /* Versión más oscura del color de la categoría */
+    border-color: #008ac7;
+  }
+
+  .mobile-actions-bar .action-button-move.-to-progress:hover {
+    background-color: #c7a300; /* Versión más oscura del color de la categoría */
+    border-color: #c7a300;
+  }
+
+  .mobile-actions-bar .action-button-move.-to-resolved:hover {
+    background-color: #17c200; /* Versión más oscura del color de la categoría */
+    border-color: #17c200;
+  }
 }

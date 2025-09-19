@@ -1,12 +1,12 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import useWindowSize from '../../utils/useWindowSize'; // Import the hook
+import useWindowSize from '../../utils/useWindowSize';
 import './BackButton.css'; 
 
 const BackButton: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { width } = useWindowSize(); // Use the hook
+  const { width } = useWindowSize(); 
 
   const handleGoBack = () => {
     if (location.state && location.state.from) {
@@ -15,8 +15,8 @@ const BackButton: React.FC = () => {
       navigate(-1);
     }
   };
-
-  const isMobile = width && width < 768; // Define mobile breakpoint
+//definicion de variable para saber si es movil o no
+  const isMobile = width && width < 768; 
 
   return (
     <button onClick={handleGoBack} className="back-button">

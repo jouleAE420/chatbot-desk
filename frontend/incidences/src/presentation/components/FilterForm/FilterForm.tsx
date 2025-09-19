@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
 import './FilterForm.css';
 
+
+//interface para las props del componente
 interface FilterFormProps {
   isVisible: boolean;
   onClose: () => void;
-  onApplyFilter: (filters: any) => void; // 'any' por ahora, se refinará
-  currentFilterValues: any; // 'any' por ahora
+  onApplyFilter: (filters: any) => void; 
+  currentFilterValues: any; 
 }
-
+//declaramos un const que es el componente
 const FilterForm: React.FC<FilterFormProps> = ({
   isVisible,
   onClose,
   onApplyFilter,
   currentFilterValues,
-}) => {
+}) => {//aqui definimos los estados iniciales de los filtros
   const [ticketType, setTicketType] = useState(currentFilterValues?.ticketType || '');
   const [clientName, setClientName] = useState(currentFilterValues?.clientName || '');
 

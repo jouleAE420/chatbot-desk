@@ -18,6 +18,8 @@
   font-size: 0.8rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  backdrop-filter: blur(5px); /* Glassmorphism effect */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
 .action-button-move:hover {
@@ -27,36 +29,36 @@
 
 /* Color coding for move buttons */
 .action-button-move.-to-pending {
-  background-color: var(--color-quaternary);
-  border-color: var(--color-quaternary);
+  background-color: rgba(0, 168, 243, 0.2);
+  border-color: rgba(0, 168, 243, 0.4);
   color: var(--color-text);
 }
 .action-button-move.-to-pending:hover {
-  background-color: #008ac7; /* Darker quaternary */
-  border-color: #008ac7;
+  background-color: rgba(0, 138, 199, 0.3); /* Darker quaternary */
+  border-color: rgba(0, 138, 199, 0.6);
   color: var(--color-text); /* Asegurar texto blanco */
 }
 
 .action-button-move.-to-progress {
-  background-color: var(--color-secondary);
-  border-color: var(--color-secondary);
+  background-color: rgba(240, 196, 0, 0.2);
+  border-color: rgba(240, 196, 0, 0.4);
   color: var(--color-text);
 }
 .action-button-move.-to-progress:hover {
-  background-color: #c7a300; /* Darker secondary */
-  border-color: #c7a300;
+  background-color: rgba(199, 163, 0, 0.3); /* Darker secondary */
+  border-color: rgba(199, 163, 0, 0.6);
   color: var(--color-text); /* Asegurar texto blanco */
 }
 
 .action-button-move.-to-resolved {
-  background-color: var(--color-tertiary);
+  background-color: rgba(29, 245, 0, 0.2);
   color: var(--color-text);
-  border-color: var(--color-tertiary);
+  border-color: rgba(29, 245, 0, 0.4);
 }
 .action-button-move.-to-resolved:hover {
-  background-color: #17c200; /* Darker tertiary */
+  background-color: rgba(23, 194, 0, 0.3); /* Darker tertiary */
   color: var(--color-text); /* Asegurar texto blanco */
-  border-color: #17c200;
+  border-color: rgba(23, 194, 0, 0.6);
 }
 
 @media (max-width: 480px) {

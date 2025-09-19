@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { BackButton } from '../components/BackButton';
+import { GenericBackButton } from '../components/GenericBackButton'; // Nueva importación
 import type { TicketOptions } from '../../domain/models/incidencia';
 import { StatusType } from '../../domain/models/incidencia';
 import StatusActionButtons from '../components/StatusActionButtons';
@@ -48,7 +49,7 @@ const IncidenceDetailPage: React.FC<Props> = ({ incidencias, onUpdateStatus }) =
     return (
       <div className="incidence-detail-page not-found">
         <h2>Incidencia no encontrada</h2>
-        <Link to="/" className="back-link">Volver al panel</Link>
+        <GenericBackButton to="/" text="Volver al panel" />
       </div>
     );
   }

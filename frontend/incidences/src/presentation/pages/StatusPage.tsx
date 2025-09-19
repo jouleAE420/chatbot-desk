@@ -4,6 +4,7 @@ import type { TicketOptions } from '../../domain/models/incidencia';
 import { StatusType } from '../../domain/models/incidencia';
 import IncidenceCardBase from '../components/IncidenceCard/IncidenceCardBase';
 import useWindowSize from '../utils/useWindowSize'; // Import the hook
+import { GenericBackButton } from '../components/GenericBackButton'; // Nueva importación
 
 interface Props {
   incidencias: TicketOptions[];
@@ -47,9 +48,7 @@ const StatusPage: React.FC<Props> = ({ incidencias, onUpdateStatus }) => {
     return (
         <div className={`focused-view ${statusKey}`}>
             <h2 className="column-title">{statusInfo.title}</h2>
-            <Link to="/" className="back-link">
-                {width && width > 768 ? '← Volver al panel' : '←'}
-            </Link>
+            <GenericBackButton to="/" text="Volver al panel" />
             <div className="focused-grid">
                 {filteredIncidencias.map(incidencia => (
                     <div

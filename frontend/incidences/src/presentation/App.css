@@ -28,7 +28,7 @@ body {
 
 .App {
   padding: 2rem;
-  padding-top: 0; /* Changed to 0 */
+  padding-top: 0px; 
 }
 
 .App h1.main-title {

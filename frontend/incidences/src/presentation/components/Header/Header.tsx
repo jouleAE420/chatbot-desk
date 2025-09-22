@@ -1,35 +1,67 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { useLocation } from 'react-router-dom';
 import './Header.css';
+import CategoryToolbar from '../CategoryToolbar/CategoryToolbar';
+import type { ColumnState } from '../App.tsx';
+import { StatusType } from '../../../domain/models/incidencia';
+import { IconRestore } from '@tabler/icons-react';
 
-const Header: React.FC = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
+const statusKeyMap: { [key: string]: StatusType } = {
+    created: StatusType.created,
+    pending: StatusType.pending,
+    'in-progress': StatusType.in_progress,
+    resolved: StatusType.resolved,
+};
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 100) { // Adjust this value as needed
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
+interface HeaderProps {
+  columnStates: Record<StatusType, ColumnState>;
+  onFilterButtonClick: (status: StatusType | 'all') => void;
+  onSortChange: (status: StatusType | 'all', sortOrder: 'asc' | 'desc') => void;
+  onApplyFilter: (status: StatusType | 'all', filters: any) => void;
+}
 
-    window.addEventListener('scroll', handleScroll);
+const Header: React.FC<HeaderProps> = ({
+  columnStates,
+  onFilterButtonClick,
+  onSortChange,
+  onApplyFilter,
+}) => {
+  const location = useLocation();
 
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
+  const statusPageRegex = /^\/(created|pending|in-progress|resolved)$/;
+  const isStatusPage = statusPageRegex.test(location.pathname);
+  
+  const currentStatusKey = location.pathname.substring(1);
+  const currentStatus = statusKeyMap[currentStatusKey];
+
+  const isScrolled = true; // Always show the "scrolled" (small) header
+
+  // Determine if any filters are currently applied for the current status
+  const areFiltersApplied = currentStatus ? Object.keys(columnStates[currentStatus].currentFilterValues).length > 0 : false;
 
   return (
     <header className={`app-header ${isScrolled ? 'scrolled' : ''}`}>
-      {isScrolled ? (
+      <>
         <h1 className="mini-header-title">B2Park</h1>
-      ) : (
-        <>
-          <img src="/dfsdfsf.png" alt="B2Park" />
-          <h1 className="header-title">PANEL DE INCIDENCIAS</h1>
-        </>
-      )}
+        {(isStatusPage || location.pathname === '/') && (
+          <div className="header-actions">
+            <CategoryToolbar
+              onFilterButtonClick={() => onFilterButtonClick(currentStatus || 'all')}
+              onSortChange={(order) => onSortChange(currentStatus || 'all', order)}
+              currentSortOrder={currentStatus ? columnStates[currentStatus].sortOrder : 'asc'}
+            />
+            {/* Render restore button only if filters are applied */}
+            {areFiltersApplied && (
+              <button 
+                className="header-icon-button" 
+                title="Limpiar filtros"
+                onClick={() => onApplyFilter(currentStatus || 'all', {})}>
+                <IconRestore stroke={2} />
+              </button>
+            )}
+          </div>
+        )}
+      </>
     </header>
   );
 };

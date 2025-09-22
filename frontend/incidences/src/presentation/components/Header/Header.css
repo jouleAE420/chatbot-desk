@@ -16,6 +16,9 @@
   height: 60px; /* Smaller height when scrolled */
   background-color: rgba(26, 26, 46, 0.9); /* Slightly darker background */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  /* padding: 0 2rem; Removed */
 }
 
 .app-header img {
@@ -56,19 +59,43 @@
 }
 
 .mini-header-title {
-  color: var(--color-secondary); /* Use a color from your theme */
-  font-size: 1.5rem; /* Smaller font size for the mini header */
+  color: var(--color-secondary);
+  font-size: 1.5rem;
   font-weight: 700;
   margin: 0;
-  position: absolute;
-  top: 50%;
-  left: 20px; /* Position in the top-left corner */
-  transform: translateY(-50%);
   opacity: 0; /* Start hidden */
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition: opacity 0.3s ease;
+  padding-left: 2rem; /* Added padding */
 }
 
 .app-header.scrolled .mini-header-title {
   opacity: 1; /* Show when scrolled */
-  transform: translateY(-50%); /* Ensure correct vertical alignment */
+}
+
+/* Styles for header actions container */
+.header-actions {
+  display: flex;
+  align-items: center;
+  margin-left: auto; /* Pushes the toolbar to the very right */
+  padding-right: 2rem; /* Added padding */
+}
+
+.header-icon-button {
+  background-color: transparent;
+  border: none;
+  border-radius: 5px;
+  color: var(--color-text);
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 0.5rem; /* Space between toolbar and this button */
+}
+
+.header-icon-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }

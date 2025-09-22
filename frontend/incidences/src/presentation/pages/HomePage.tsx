@@ -1,52 +1,33 @@
-import React, { useState } from 'react';
+import React from 'react'; // Removed useState
 import { Link } from 'react-router-dom';
 import type { TicketOptions } from '../../domain/models/incidencia';
 import IncidenceColumn from '../components/IncidenceColumn';
 import { StatusType } from '../../domain/models/incidencia';
 import { DragDropContext, type DropResult } from '@hello-pangea/dnd';
-import CategoryToolbar from '../components/CategoryToolbar/CategoryToolbar'; // Importar CategoryToolbar
-import FilterForm from '../components/FilterForm/FilterForm'; // Importar FilterForm
+import CategoryToolbar from '../components/CategoryToolbar/CategoryToolbar';
+import FilterForm from '../components/FilterForm/FilterForm';
+import type { ColumnState } from '../App'; // Import ColumnState from App
 
 interface Props {
   incidencias: TicketOptions[];
   onUpdateStatus: (id: number, newStatus: StatusType) => void;
+  // Props passed down from App
+  columnStates: Record<StatusType, ColumnState>;
+  onFilterButtonClick: (status: StatusType) => void;
+  onApplyFilter: (status: StatusType, filters: any) => void;
+  onSortChange: (status: StatusType, sortOrder: 'asc' | 'desc') => void;
+  onCloseFilterForm: (status: StatusType) => void;
 }
 
-interface ColumnState {
-  filterText: string;
-  sortOrder: 'asc' | 'desc';
-  isFilterFormVisible: boolean;
-  currentFilterValues: any; // Nuevo estado para los valores del formulario de filtro
-}
-
-const HomePage: React.FC<Props> = ({ incidencias, onUpdateStatus }) => {
-  const [columnStates, setColumnStates] = useState<Record<StatusType, ColumnState>>({
-    [StatusType.created]: { filterText: '', sortOrder: 'asc', isFilterFormVisible: false, currentFilterValues: {} },
-    [StatusType.pending]: { filterText: '', sortOrder: 'asc', isFilterFormVisible: false, currentFilterValues: {} },
-    [StatusType.in_progress]: { filterText: '', sortOrder: 'asc', isFilterFormVisible: false, currentFilterValues: {} },
-    [StatusType.resolved]: { filterText: '', sortOrder: 'asc', isFilterFormVisible: false, currentFilterValues: {} },
-  });
-
-  const handleFilterButtonClick = (status: StatusType) => {
-    setColumnStates(prev => ({
-      ...prev,
-      [status]: { ...prev[status], isFilterFormVisible: !prev[status].isFilterFormVisible },
-    }));
-  };
-
-  const handleApplyFilter = (status: StatusType, filters: any) => {
-    setColumnStates(prev => ({
-      ...prev,
-      [status]: { ...prev[status], currentFilterValues: filters, isFilterFormVisible: false }, // Cerrar el formulario al aplicar
-    }));
-  };
-
-  const handleSortChange = (status: StatusType, sortOrder: 'asc' | 'desc') => {
-    setColumnStates(prev => ({
-      ...prev,
-      [status]: { ...prev[status], sortOrder },
-    }));
-  };
+const HomePage: React.FC<Props> = ({ 
+  incidencias, 
+  onUpdateStatus,
+  columnStates,
+  onFilterButtonClick,
+  onApplyFilter,
+  onSortChange
+}) => {
+  // All local state and handlers are removed
 
   const columns: { [key in StatusType]: { title: string; incidencias: TicketOptions[] } } = {
     [StatusType.created]: {
@@ -94,7 +75,7 @@ const HomePage: React.FC<Props> = ({ incidencias, onUpdateStatus }) => {
           const currentColumnState = columnStates[key as StatusType];
           let filteredIncidencias = col.incidencias;
 
-          // Aplicar filtros del formulario
+          // This filtering logic remains, but uses the state from props
           if (currentColumnState.currentFilterValues.ticketType) {
             filteredIncidencias = filteredIncidencias.filter(inc =>
               inc.ticketType.toLowerCase().includes(currentColumnState.currentFilterValues.ticketType.toLowerCase())
@@ -107,9 +88,9 @@ const HomePage: React.FC<Props> = ({ incidencias, onUpdateStatus }) => {
           }
 
           if (currentColumnState.sortOrder === 'asc') {
-            filteredIncidencias.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+            filteredIncidencias = [...filteredIncidencias].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
           } else {
-            filteredIncidencias.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+            filteredIncidencias = [...filteredIncidencias].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
           }
 
           return (
@@ -119,8 +100,8 @@ const HomePage: React.FC<Props> = ({ incidencias, onUpdateStatus }) => {
                 title={<Link to={`/${key.toLowerCase().replace(/_/g, '-')}`}>{col.title}</Link>}
                 toolbar={
                   <CategoryToolbar
-                    onFilterButtonClick={() => handleFilterButtonClick(key as StatusType)}
-                    onSortChange={(order) => handleSortChange(key as StatusType, order)}
+                    onFilterButtonClick={() => onFilterButtonClick(key as StatusType)}
+                    onSortChange={(order) => onSortChange(key as StatusType, order)}
                     currentSortOrder={currentColumnState.sortOrder}
                   />
                 }
@@ -131,9 +112,10 @@ const HomePage: React.FC<Props> = ({ incidencias, onUpdateStatus }) => {
               {currentColumnState.isFilterFormVisible && (
                 <FilterForm
                   isVisible={currentColumnState.isFilterFormVisible}
-                  onClose={() => handleFilterButtonClick(key as StatusType)} // Reutilizamos la función para cerrar
-                  onApplyFilter={(filters) => handleApplyFilter(key as StatusType, filters)}
+                  onClose={() => onCloseFilterForm(key as StatusType)} // Use the new handler
+                  onApplyFilter={(filters) => onApplyFilter(key as StatusType, filters)}
                   currentFilterValues={currentColumnState.currentFilterValues}
+                  incidencias={incidencias} // Pass down the full list
                 />
               )}
             </React.Fragment>

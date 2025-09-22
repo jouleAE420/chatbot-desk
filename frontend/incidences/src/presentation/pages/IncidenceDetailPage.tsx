@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { BackButton } from '../components/BackButton';
-import { GenericBackButton } from '../components/GenericBackButton'; // Nueva importación
+import { GenericBackButton } from '../components/GenericBackButton'; 
 import type { TicketOptions } from '../../domain/models/incidencia';
 import { StatusType } from '../../domain/models/incidencia';
 import StatusActionButtons from '../components/StatusActionButtons';

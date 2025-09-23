@@ -63,10 +63,12 @@ const IncidenceDetailPage: React.FC<Props> = ({ incidencias, onUpdateStatus }) =
           <p>Creada hace {timeAgo(incidencia.createdAt)}</p>
         </div>
         <div className="header-actions">
-          <StatusActionButtons 
-            status={incidencia.status} 
-            onMoveClick={handleMoveClick} 
-          />
+          {width && width >= 768 && ( // Conditionally render for desktop
+            <StatusActionButtons 
+              status={incidencia.status} 
+              onMoveClick={handleMoveClick} 
+            />
+          )}
         </div>
       </div>
 

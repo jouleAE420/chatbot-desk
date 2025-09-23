@@ -2,16 +2,36 @@ import React, { useState, useMemo, useEffect } from 'react';
 import './FilterForm.css';
 import type { TicketOptions } from '../../../domain/models/incidencia';
 
-//esta interface define las props que el componente FilterForm va a recibir
+// Define un tipo para los valores de filtro para evitar el uso de `any`.
+type FilterValues = {
+  parkingId?: string;
+  ticketType?: string;
+  clientName?: string;
+  startDate?: string;
+  endDate?: string;
+};
+
+// Tipo para el estado interno del formulario, incluyendo partes de la fecha.
+type FormState = {
+  parkingId?: string;
+  ticketType?: string;
+  clientName?: string;
+  startDay?: string;
+  startMonth?: string;
+  startYear?: string;
+  endDay?: string;
+  endMonth?: string;
+  endYear?: string;
+};
+
 interface FilterFormProps {
   isVisible: boolean;
   onClose: () => void;
-  onApplyFilter: (filters: any) => void;
-  currentFilterValues: any;
-  incidencias: TicketOptions[]; 
+  onApplyFilter: (filters: FilterValues) => void;
+  currentFilterValues: FilterValues;
+  incidencias: TicketOptions[];
 }
 
-//el componente FilterForm es un formulario que permite filtrar las incidencias
 const FilterForm: React.FC<FilterFormProps> = ({
   isVisible,
   onClose,
@@ -19,37 +39,94 @@ const FilterForm: React.FC<FilterFormProps> = ({
   currentFilterValues,
   incidencias,
 }) => {
-  const [filters, setFilters] = useState(currentFilterValues || {});
-//sincroniza los filtros actuales con los valores de filtro recibidos por props
+  const [filters, setFilters] = useState<FormState>({});
+
+  // Sincroniza el estado del formulario cuando se hace visible o cambian los filtros.
   useEffect(() => {
-    setFilters(currentFilterValues || {});
+    if (isVisible) {
+      const { startDate, endDate, ...rest } = currentFilterValues;
+      const [startYear, startMonth, startDay] = startDate?.split('-') || [];
+      const [endYear, endMonth, endDay] = endDate?.split('-') || [];
+      setFilters({
+        ...rest,
+        startDay: startDay || '',
+        startMonth: startMonth || '',
+        startYear: startYear || '',
+        endDay: endDay || '',
+        endMonth: endMonth || '',
+        endYear: endYear || '',
+      });
+    }
   }, [currentFilterValues, isVisible]);
-//obtiene los valores unicos de parkingId y ticketType para los dropdowns
-  const uniqueParkingIds = useMemo(() => {
-    const ids = new Set(incidencias.map(inc => inc.parkingId));
-    return Array.from(ids);
-  }, [incidencias]);
-//obtiene los valores unicos de ticketType para los dropdowns
+
+  // --- Filtros en Cascada ---
+  const uniqueParkingIds = useMemo(() => Array.from(new Set(incidencias.map(inc => inc.parkingId))), [incidencias]);
+
   const uniqueTicketTypes = useMemo(() => {
-    const types = new Set(incidencias.map(inc => inc.ticketType));
-    return Array.from(types);
+    if (!filters.parkingId) return Array.from(new Set(incidencias.map(inc => inc.ticketType)));
+    const filtered = incidencias.filter(inc => inc.parkingId === filters.parkingId);
+    return Array.from(new Set(filtered.map(inc => inc.ticketType)));
+  }, [incidencias, filters.parkingId]);
+
+  const uniqueClientNames = useMemo(() => {
+    let filtered = incidencias;
+    if (filters.parkingId) {
+      filtered = filtered.filter(inc => inc.parkingId === filters.parkingId);
+    }
+    if (filters.ticketType) {
+      filtered = filtered.filter(inc => inc.ticketType === filters.ticketType);
+    }
+    return Array.from(new Set(filtered.map(inc => inc.clientName).filter(Boolean)));
+  }, [incidencias, filters.parkingId, filters.ticketType]);
+  
+  const uniqueYears = useMemo(() => {
+    const years = new Set(
+      incidencias
+      //pendiente
+        .map(inc => new Date(inc.creationDate).getFullYear())
+        .filter(year => !isNaN(year))
+    );
+    return Array.from(years).sort((a, b) => b - a);
   }, [incidencias]);
-//si el formulario no es visible, no renderiza nada. las buenas practicas de la programacion ajajaj
+  const months = Array.from({ length: 12 }, (_, i) => ({ value: i + 1, label: new Date(0, i).toLocaleString('es', { month: 'long' }) }));
+  const days = Array.from({ length: 31 }, (_, i) => i + 1);
+
+
   if (!isVisible) {
     return null;
   }
-//maneja los cambios en los inputs del formulario
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFilters((prev: any) => ({ ...prev, [name]: value }));
+    setFilters(prev => ({ ...prev, [name]: value }));
   };
 
-  //aplica los filtros y cierra el formulario
   const handleApply = () => {
-    onApplyFilter(filters);
+    const { startDay, startMonth, startYear, endDay, endMonth, endYear, ...rest } = filters;
+    
+    const finalFilters: FilterValues = {
+        parkingId: rest.parkingId || '',
+        ticketType: rest.ticketType || '',
+        clientName: rest.clientName || '',
+        startDate: '',
+        endDate: ''
+    };
+
+    if (startYear && startMonth && startDay) {
+      finalFilters.startDate = `${startYear}-${String(startMonth).padStart(2, '0')}-${String(startDay).padStart(2, '0')}`;
+    }
+    if (endYear && endMonth && endDay) {
+      finalFilters.endDate = `${endYear}-${String(endMonth).padStart(2, '0')}-${String(endDay).padStart(2, '0')}`;
+    }
+    
+    onApplyFilter(finalFilters);
   };
 
-//este retturn renderiza el formulario con los dropdowns y botones
+  const handleClear = () => {
+    setFilters({});
+    onApplyFilter({});
+  };
+
   return (
     <div className="filter-form-overlay" onClick={onClose}>
       <div className="filter-form-container" onClick={(e) => e.stopPropagation()}>
@@ -60,47 +137,66 @@ const FilterForm: React.FC<FilterFormProps> = ({
         
         <div className="form-group">
           <label htmlFor="parkingId">Proyecto (Parking ID):</label>
-          <select
-            id="parkingId"
-            name="parkingId"
-            value={filters.parkingId || ''}
-            onChange={handleInputChange}
-          >
+          <select id="parkingId" name="parkingId" value={filters.parkingId || ''} onChange={handleInputChange}>
             <option value="">Todos</option>
-            {uniqueParkingIds.map(id => (
-              <option key={id} value={id}>{id}</option>
-            ))}
+            {uniqueParkingIds.map(id => <option key={id} value={id}>{id}</option>)}
           </select>
         </div>
 
         <div className="form-group">
           <label htmlFor="ticketType">Tipo de Ticket:</label>
-          <select
-            id="ticketType"
-            name="ticketType"
-            value={filters.ticketType || ''}
-            onChange={handleInputChange}
-          >
+          <select id="ticketType" name="ticketType" value={filters.ticketType || ''} onChange={handleInputChange}>
             <option value="">Todos</option>
-            {uniqueTicketTypes.map(type => (
-              <option key={type} value={type}>{type}</option>
-            ))}
+            {uniqueTicketTypes.map(type => <option key={type} value={type}>{type}</option>)}
           </select>
         </div>
 
         <div className="form-group">
           <label htmlFor="clientName">Nombre del Cliente:</label>
-          <input
-            type="text"
-            id="clientName"
-            name="clientName"
-            value={filters.clientName || ''}
-            onChange={handleInputChange}
-            placeholder="Buscar por nombre..."
-          />
+          <select id="clientName" name="clientName" value={filters.clientName || ''} onChange={handleInputChange}>
+            <option value="">Todos</option>
+            {uniqueClientNames.map(name => <option key={name} value={name}>{name}</option>)}
+          </select>
+        </div>
+
+        <div className="form-group">
+          <label>Fecha de Inicio:</label>
+          <div className="date-selects">
+            <select name="startDay" value={filters.startDay || ''} onChange={handleInputChange}>
+              <option value="">Día</option>
+              {days.map(day => <option key={day} value={day}>{day}</option>)}
+            </select>
+            <select name="startMonth" value={filters.startMonth || ''} onChange={handleInputChange}>
+              <option value="">Mes</option>
+              {months.map(month => <option key={month.value} value={month.value}>{month.label}</option>)}
+            </select>
+            <select name="startYear" value={filters.startYear || ''} onChange={handleInputChange}>
+              <option value="">Año</option>
+              {uniqueYears.map(year => <option key={year} value={year}>{year}</option>)}
+            </select>
+          </div>
+        </div>
+
+        <div className="form-group">
+          <label>Fecha de Fin:</label>
+          <div className="date-selects">
+            <select name="endDay" value={filters.endDay || ''} onChange={handleInputChange}>
+              <option value="">Día</option>
+              {days.map(day => <option key={day} value={day}>{day}</option>)}
+            </select>
+            <select name="endMonth" value={filters.endMonth || ''} onChange={handleInputChange}>
+              <option value="">Mes</option>
+              {months.map(month => <option key={month.value} value={month.value}>{month.label}</option>)}
+            </select>
+            <select name="endYear" value={filters.endYear || ''} onChange={handleInputChange}>
+              <option value="">Año</option>
+              {uniqueYears.map(year => <option key={year} value={year}>{year}</option>)}
+            </select>
+          </div>
         </div>
 
         <div className="form-actions">
+          <button onClick={handleClear} className="clear-button">Limpiar Filtros</button>
           <button onClick={handleApply} className="apply-button">Aplicar</button>
         </div>
       </div>

@@ -37,7 +37,9 @@ const Header: React.FC<HeaderProps> = ({
   const isScrolled = true; // Always show the "scrolled" (small) header
 
   // Determine if any filters are currently applied for the current status
-  const areFiltersApplied = currentStatus ? Object.keys(columnStates[currentStatus].currentFilterValues).length > 0 : false;
+  const areFiltersApplied = currentStatus 
+    ? Object.keys(columnStates[currentStatus].currentFilterValues).length > 0 
+    : Object.keys(columnStates.all.currentFilterValues).length > 0;
 
   return (
     <header className={`app-header ${isScrolled ? 'scrolled' : ''}`}>
@@ -48,7 +50,7 @@ const Header: React.FC<HeaderProps> = ({
             <CategoryToolbar
               onFilterButtonClick={() => onFilterButtonClick(currentStatus || 'all')}
               onSortChange={(order) => onSortChange(currentStatus || 'all', order)}
-              currentSortOrder={currentStatus ? columnStates[currentStatus].sortOrder : 'asc'}
+              currentSortOrder={currentStatus ? columnStates[currentStatus].sortOrder : columnStates.all.sortOrder}
             />
             {/* Render restore button only if filters are applied */}
             {areFiltersApplied && (

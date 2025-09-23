@@ -9,13 +9,12 @@ import StatusPage from './pages/StatusPage';
 import IncidenceDetailPage from './pages/IncidenceDetailPage';
 import Header from './components/Header';
 
-// State structure for sorting and filtering
-export interface ColumnState {
+export type ColumnState = {
   filterText: string;
   sortOrder: 'asc' | 'desc';
   isFilterFormVisible: boolean;
   currentFilterValues: any;
-}
+};
 
 function App() {
   const [incidencias, setIncidencias] = useState<TicketOptions[]>([]);

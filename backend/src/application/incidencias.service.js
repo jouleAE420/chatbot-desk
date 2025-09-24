@@ -5,13 +5,12 @@ const getIncidencias = () => {
   return todasLasIncidencias;
 };
 
-const updateIncidenciaStatus = (id, status) => {
+const updateIncidenciaStatus = (id, status, assignedTo) => {
   if (!status) {
-    // La validación podría ser más compleja y pertenecer aquí
     throw new Error('El nuevo estado (status) es requerido');
   }
 
-  const updatedIncidencia = repository.updateStatus(id, status);
+  const updatedIncidencia = repository.updateStatus(id, status, assignedTo);
 
   if (!updatedIncidencia) {
     return null;

@@ -23,4 +23,6 @@ export interface TicketOptions  {
   parkingId: string;
   createdAt: number;
   status: StatusType;
+  assignedTo?: string; // Add this line
+  resolvedAt?: number | null; // New field
 }

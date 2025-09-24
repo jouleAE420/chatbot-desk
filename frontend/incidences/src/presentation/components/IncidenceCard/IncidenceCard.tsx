@@ -7,7 +7,7 @@ import IncidenceCardBase from './IncidenceCardBase';
 
 interface Props {
   incidencia: TicketOptions;
-  onUpdateStatus: (id: number, newStatus: StatusType) => void;
+  onUpdateStatus: (id: number, newStatus: StatusType, assignedTo?: string) => void;
   index: number;
 }
 

@@ -7,6 +7,7 @@ import { getAllIncidencias, updateIncidenciaStatus } from '../application/servic
 import HomePage from './pages/HomePage';
 import StatusPage from './pages/StatusPage';
 import IncidenceDetailPage from './pages/IncidenceDetailPage';
+import ResolvedDashboardPage from './pages/ResolvedDashboardPage'; 
 import Header from './components/Header';
 
 export type ColumnState = {
@@ -27,81 +28,23 @@ function App() {
     [StatusType.pending]: { filterText: '', sortOrder: 'asc', isFilterFormVisible: false, currentFilterValues: {} },
     [StatusType.in_progress]: { filterText: '', sortOrder: 'asc', isFilterFormVisible: false, currentFilterValues: {} },
     [StatusType.resolved]: { filterText: '', sortOrder: 'asc', isFilterFormVisible: false, currentFilterValues: {} },
-    all: { filterText: '', sortOrder: 'asc', isFilterFormVisible: false, currentFilterValues: {} }, // Global state
+    all: { filterText: '', sortOrder: 'asc', isFilterFormVisible: false, currentFilterValues: {} },
   });
 
-  // Toggles form visibility (for header button)
   const handleFilterButtonClick = (status: StatusType | 'all') => {
-    setColumnStates(prev => {
-      if (status === 'all') {
-        // Toggle visibility for the global filter form
-        return {
-          ...prev,
-          all: { ...prev.all, isFilterFormVisible: !prev.all.isFilterFormVisible },
-        };
-      } else {
-        return {
-          ...prev,
-          [status]: { ...prev[status], isFilterFormVisible: !prev[status].isFilterFormVisible },
-        };
-      }
-    });
+    setColumnStates(prev => ({ ...prev, [status]: { ...prev[status], isFilterFormVisible: !prev[status].isFilterFormVisible } }));
   };
 
-  // Explicitly closes the form (for 'X' button or overlay click)
   const handleCloseFilterForm = (status: StatusType | 'all') => {
-    setColumnStates(prev => {
-      if (status === 'all') {
-        return {
-          ...prev,
-          all: { ...prev.all, isFilterFormVisible: false },
-        };
-      } else {
-        return {
-          ...prev,
-          [status]: { ...prev[status], isFilterFormVisible: false },
-        };
-      }
-    });
+    setColumnStates(prev => ({ ...prev, [status]: { ...prev[status], isFilterFormVisible: false } }));
   };
 
-  // Applies filter and closes the form
   const handleApplyFilter = (status: StatusType | 'all', filters: any) => {
-    setColumnStates(prev => {
-      if (status === 'all') {
-        // Apply global filter to all columns
-        const newColumnStates = { ...prev };
-        Object.values(StatusType).forEach(st => {
-          newColumnStates[st] = { ...newColumnStates[st], currentFilterValues: filters };
-        });
-        newColumnStates.all = { ...newColumnStates.all, currentFilterValues: filters, isFilterFormVisible: false };
-        return newColumnStates;
-      } else {
-        return {
-          ...prev,
-          [status]: { ...prev[status], currentFilterValues: filters, isFilterFormVisible: false },
-        };
-      }
-    });
+    setColumnStates(prev => ({ ...prev, [status]: { ...prev[status], currentFilterValues: filters, isFilterFormVisible: false } }));
   };
 
   const handleSortChange = (status: StatusType | 'all', sortOrder: 'asc' | 'desc') => {
-    setColumnStates(prev => {
-      if (status === 'all') {
-        // Apply global sort to all columns
-        const newColumnStates = { ...prev };
-        Object.values(StatusType).forEach(st => {
-          newColumnStates[st] = { ...newColumnStates[st], sortOrder: sortOrder };
-        });
-        newColumnStates.all = { ...newColumnStates.all, sortOrder: sortOrder };
-        return newColumnStates;
-      } else {
-        return {
-          ...prev,
-          [status]: { ...prev[status], sortOrder },
-        };
-      }
-    });
+    setColumnStates(prev => ({ ...prev, [status]: { ...prev[status], sortOrder } }));
   };
 
   useEffect(() => {
@@ -119,9 +62,9 @@ function App() {
     loadIncidencias();
   }, []);
 
-  const handleUpdateStatus = async (id: number, newStatus: StatusType) => {
+  const handleUpdateStatus = async (id: number, newStatus: StatusType, assignedTo?: string) => {
     try {
-      const updatedIncidencia = await updateIncidenciaStatus(id, newStatus);
+      const updatedIncidencia = await updateIncidenciaStatus(id, newStatus, assignedTo);
       setIncidencias(prev => prev.map(inc => inc.id === updatedIncidencia.id ? updatedIncidencia : inc));
     } catch (error) {
       console.error(error);
@@ -154,6 +97,10 @@ function App() {
                   onCloseFilterForm={handleCloseFilterForm}
                 />
               } 
+            />
+            <Route 
+              path="/resolved"
+              element={<ResolvedDashboardPage incidencias={incidencias} />}
             />
             <Route 
               path="/:statusKey" 

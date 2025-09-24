@@ -1,4 +1,4 @@
-import React from 'react'; // Removed useState
+import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import type { TicketOptions } from '../../domain/models/incidencia';
 import IncidenceColumn from '../components/IncidenceColumn';
@@ -6,18 +6,17 @@ import { StatusType } from '../../domain/models/incidencia';
 import { DragDropContext, type DropResult } from '@hello-pangea/dnd';
 import CategoryToolbar from '../components/CategoryToolbar/CategoryToolbar';
 import FilterForm from '../components/FilterForm/FilterForm';
-import ResolvedIncidencesTabs from '../components/ResolvedIncidencesTabs/ResolvedIncidencesTabs'; // Import new component
-import type { ColumnState } from '../App'; // Import ColumnState from App
+import AssignModal from '../components/AssignModal/AssignModal';
+import type { ColumnState } from '../App';
 
 interface Props {
   incidencias: TicketOptions[];
-  onUpdateStatus: (id: number, newStatus: StatusType) => void;
-  // Props passed down from App
-  columnStates: Record<StatusType | 'all', ColumnState>; // Updated to include 'all'
-  onFilterButtonClick: (status: StatusType | 'all') => void; // Updated to include 'all'
-  onApplyFilter: (status: StatusType | 'all', filters: any) => void; // Updated to include 'all'
-  onSortChange: (status: StatusType | 'all', sortOrder: 'asc' | 'desc') => void; // Updated to include 'all'
-  onCloseFilterForm: (status: StatusType | 'all') => void; // Updated to include 'all'
+  onUpdateStatus: (id: number, newStatus: StatusType, assignedTo?: string) => void;
+  columnStates: Record<StatusType | 'all', ColumnState>;
+  onFilterButtonClick: (status: StatusType | 'all') => void;
+  onApplyFilter: (status: StatusType | 'all', filters: any) => void;
+  onSortChange: (status: StatusType | 'all', sortOrder: 'asc' | 'desc') => void;
+  onCloseFilterForm: (status: StatusType | 'all') => void;
 }
 
 const HomePage: React.FC<Props> = ({ 
@@ -29,21 +28,21 @@ const HomePage: React.FC<Props> = ({
   onSortChange,
   onCloseFilterForm
 }) => {
-  // All local state and handlers are removed
+  const [assignmentInfo, setAssignmentInfo] = useState<{ incidence: TicketOptions; newStatus: StatusType } | null>(null);
+
+  const assignees = useMemo(() => 
+    Array.from(new Set(incidencias.map(inc => inc.assignedTo).filter((name): name is string => !!name)))
+  , [incidencias]);
 
   const globalColumnState = columnStates.all;
-  let processedIncidencias = [...incidencias]; // Start with a copy of all incidences
+  let processedIncidencias = [...incidencias];
 
   // Apply global filtering
   if (globalColumnState.currentFilterValues.ticketType) {
-    processedIncidencias = processedIncidencias.filter(inc =>
-      inc.ticketType.toLowerCase().includes(globalColumnState.currentFilterValues.ticketType.toLowerCase())
-    );
+    processedIncidencias = processedIncidencias.filter(inc => inc.ticketType.toLowerCase().includes(globalColumnState.currentFilterValues.ticketType.toLowerCase()));
   }
-  if (globalColumnState.currentFilterValues.clientName) {
-    processedIncidencias = processedIncidencias.filter(inc =>
-      inc.clientName.toLowerCase().includes(globalColumnState.currentFilterValues.clientName.toLowerCase())
-    );
+  if (globalColumnState.currentFilterValues.assignedTo) {
+    processedIncidencias = processedIncidencias.filter(inc => inc.assignedTo === globalColumnState.currentFilterValues.assignedTo);
   }
   if (globalColumnState.currentFilterValues.startDate) {
     const startDate = new Date(globalColumnState.currentFilterValues.startDate);
@@ -51,7 +50,6 @@ const HomePage: React.FC<Props> = ({
   }
   if (globalColumnState.currentFilterValues.endDate) {
     const endDate = new Date(globalColumnState.currentFilterValues.endDate);
-    // Set end date to the end of the day
     endDate.setHours(23, 59, 59, 999);
     processedIncidencias = processedIncidencias.filter(inc => new Date(inc.createdAt) <= endDate);
   }
@@ -64,21 +62,15 @@ const HomePage: React.FC<Props> = ({
   }
 
   const columns: { [key in StatusType]: { title: string; incidencias: TicketOptions[] } } = {
-    [StatusType.created]: {
-      title: 'Creadas',
-      incidencias: processedIncidencias.filter(inc => inc.status === StatusType.created),
-    },
-    [StatusType.pending]: {
-      title: 'Pendientes',
-      incidencias: processedIncidencias.filter(inc => inc.status === StatusType.pending),
-    },
-    [StatusType.in_progress]: {
-      title: 'En Progreso',
-      incidencias: processedIncidencias.filter(inc => inc.status === StatusType.in_progress),
-    },
+    [StatusType.created]: { title: 'Creadas', incidencias: processedIncidencias.filter(inc => inc.status === StatusType.created) },
+    [StatusType.pending]: { title: 'Pendientes', incidencias: processedIncidencias.filter(inc => inc.status === StatusType.pending) },
+    [StatusType.in_progress]: { title: 'En Progreso', incidencias: processedIncidencias.filter(inc => inc.status === StatusType.in_progress) },
     [StatusType.resolved]: {
       title: 'Resueltas',
-      incidencias: processedIncidencias.filter(inc => inc.status === StatusType.resolved),
+      incidencias: processedIncidencias
+        .filter(inc => inc.status === StatusType.resolved)
+        .sort((a, b) => (b.resolvedAt || 0) - (a.resolvedAt || 0))
+        .slice(0, 3),
     },
   };
 
@@ -90,16 +82,27 @@ const HomePage: React.FC<Props> = ({
     document.body.classList.remove('is-dragging');
     const { source, destination, draggableId } = result;
 
-    if (!destination) {
-      return;
-    }
+    if (!destination || source.droppableId === destination.droppableId) return;
 
-    if (source.droppableId === destination.droppableId) {
-      return;
-    }
+    const incidenceId = Number(draggableId);
+    const movedIncidence = incidencias.find(inc => inc.id === incidenceId);
+    if (!movedIncidence) return;
 
     const newStatus = destination.droppableId as StatusType;
-    onUpdateStatus(Number(draggableId), newStatus);
+    const sourceStatus = source.droppableId as StatusType;
+
+    if (sourceStatus === StatusType.created && !movedIncidence.assignedTo && (newStatus === StatusType.pending || newStatus === StatusType.in_progress)) {
+      setAssignmentInfo({ incidence: movedIncidence, newStatus });
+    } else {
+      onUpdateStatus(incidenceId, newStatus, movedIncidence.assignedTo);
+    }
+  };
+
+  const handleModalAction = (action: 'add' | 'edit' | 'delete', value?: string) => {
+    if (action === 'add' && value && assignmentInfo) {
+      onUpdateStatus(assignmentInfo.incidence.id, assignmentInfo.newStatus, value);
+    }
+    setAssignmentInfo(null);
   };
 
   return (
@@ -111,8 +114,19 @@ const HomePage: React.FC<Props> = ({
           onApplyFilter={(filters) => onApplyFilter('all', filters)}
           currentFilterValues={globalColumnState.currentFilterValues}
           incidencias={incidencias}
+          assignees={assignees}
         />
       )}
+
+      {assignmentInfo && (
+        <AssignModal
+          isOpen={!!assignmentInfo}
+          onClose={() => setAssignmentInfo(null)}
+          mode="add"
+          onAction={handleModalAction}
+        />
+      )}
+
       <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
         <div className="columns-container">
           {Object.entries(columns).map(([key, col]) => {
@@ -121,14 +135,10 @@ const HomePage: React.FC<Props> = ({
 
             // Apply individual column filtering
             if (currentColumnState.currentFilterValues.ticketType) {
-              filteredIncidencias = filteredIncidencias.filter(inc =>
-                inc.ticketType.toLowerCase().includes(currentColumnState.currentFilterValues.ticketType.toLowerCase())
-              );
+              filteredIncidencias = filteredIncidencias.filter(inc => inc.ticketType.toLowerCase().includes(currentColumnState.currentFilterValues.ticketType.toLowerCase()));
             }
-            if (currentColumnState.currentFilterValues.clientName) {
-              filteredIncidencias = filteredIncidencias.filter(inc =>
-                inc.clientName.toLowerCase().includes(currentColumnState.currentFilterValues.clientName.toLowerCase())
-              );
+            if (currentColumnState.currentFilterValues.assignedTo) {
+              filteredIncidencias = filteredIncidencias.filter(inc => inc.assignedTo === currentColumnState.currentFilterValues.assignedTo);
             }
             if (currentColumnState.currentFilterValues.startDate) {
               const startDate = new Date(currentColumnState.currentFilterValues.startDate);
@@ -136,7 +146,6 @@ const HomePage: React.FC<Props> = ({
             }
             if (currentColumnState.currentFilterValues.endDate) {
               const endDate = new Date(currentColumnState.currentFilterValues.endDate);
-              // Set end date to the end of the day
               endDate.setHours(23, 59, 59, 999);
               filteredIncidencias = filteredIncidencias.filter(inc => new Date(inc.createdAt) <= endDate);
             }
@@ -165,14 +174,16 @@ const HomePage: React.FC<Props> = ({
                   incidencias={filteredIncidencias}
                   columnClass={key.toLowerCase().replace(/_/g, '-')}
                   onUpdateStatus={onUpdateStatus}
+                  seeMorePath={key === StatusType.resolved ? '/resolved' : undefined}
                 />
-                {currentColumnState.isFilterFormVisible && ( // Use individual column state for filter form visibility
+                {currentColumnState.isFilterFormVisible && (
                   <FilterForm
                     isVisible={currentColumnState.isFilterFormVisible}
-                    onClose={() => onCloseFilterForm(key as StatusType)} // Close individual filter form
-                    onApplyFilter={(filters) => onApplyFilter(key as StatusType, filters)} // Apply individual filter
+                    onClose={() => onCloseFilterForm(key as StatusType)}
+                    onApplyFilter={(filters) => onApplyFilter(key as StatusType, filters)}
                     currentFilterValues={currentColumnState.currentFilterValues}
-                    incidencias={incidencias} // Pass down the full list
+                    incidencias={incidencias}
+                    assignees={assignees}
                   />
                 )}
               </React.Fragment>

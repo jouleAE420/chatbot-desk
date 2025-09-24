@@ -1,0 +1,152 @@
+/* Applying styles from FilterForm.css to AssignModal.css */
+
+.assign-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7); /* from filter-form-overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.assign-modal-content {
+  background-color: #2a2a3e; /* from filter-form-container */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* from filter-form-container */
+  color: var(--color-text); /* Default text color */
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  animation: slide-down 0.3s ease-out; /* from filter-form-container */
+}
+
+/* Keyframes for animation, same as FilterForm */
+@keyframes slide-down {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.assign-modal-content h3 {
+  margin-top: 0;
+  color: var(--color-secondary); /* from filter-form-header h3 */
+  font-size: 1.5em;
+}
+
+.assign-modal-content p {
+  color: #a9a9b3; /* from form-group label */
+  margin-bottom: 20px;
+}
+
+.assign-modal-input {
+  width: calc(100% - 20px);
+  padding: 0.75rem;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 1px solid #4a4a5a; /* from form-group input */
+  background-color: #1a1a2e; /* from form-group input */
+  color: var(--color-text); /* from form-group input */
+  font-size: 1em;
+}
+
+.assign-modal-actions {
+  display: flex;
+  justify-content: space-around;
+  gap: 1rem; /* from form-actions */
+}
+
+.assign-modal-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px; /* from apply-button */
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: 700; /* from apply-button */
+  transition: background-color 0.2s ease;
+  flex: 1;
+}
+
+/* Cancel button styled like clear-button */
+.assign-modal-button.cancel {
+  background-color: #4a4a5a;
+  color: var(--color-text);
+}
+
+.assign-modal-button.cancel:hover {
+  background-color: #5a5a6a;
+}
+
+/* Assign/Confirm button styled like apply-button */
+.assign-modal-button.assign {
+  background-color: var(--color-secondary);
+  color: var(--color-bg);
+}
+
+.assign-modal-button.assign:hover:not(:disabled) {
+  background-color: #ffdf4d; /* from apply-button:hover */
+}
+
+.assign-modal-button.assign:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Styles for multi-mode modal */
+.assignee-name {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: var(--color-secondary); /* Changed to match theme */
+  margin-bottom: 20px;
+}
+
+/* Edit button styled like cancel/clear */
+.assign-modal-button.edit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  background-color: #4a4a5a;
+  color: var(--color-text);
+}
+
+.assign-modal-button.edit:hover {
+  background-color: #5a6268;
+}
+
+/* Delete button keeps its semantic red color */
+.assign-modal-button.delete,
+.assign-modal-button.delete-confirm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  background-color: #dc3545;
+  color: white;
+}
+
+.assign-modal-button.delete:hover,
+.assign-modal-button.delete-confirm:hover {
+  background-color: #c82333;
+}
+
+.assign-modal-button.cancel-view {
+  margin-top: 15px;
+  background-color: #4a4a5a; /* Styled like cancel */
+  color: var(--color-text);
+  width: 100%;
+}
+
+.assign-modal-button.cancel-view:hover {
+  background-color: #5a6a6a;
+}

@@ -2,20 +2,20 @@ import React, { useState, useMemo, useEffect } from 'react';
 import './FilterForm.css';
 import type { TicketOptions } from '../../../domain/models/incidencia';
 
-// Define un tipo para los valores de filtro para evitar el uso de `any`.
+// Define un tipo para los valores de filtro
 type FilterValues = {
   parkingId?: string;
   ticketType?: string;
-  clientName?: string;
+  assignedTo?: string;
   startDate?: string;
   endDate?: string;
 };
 
-// Tipo para el estado interno del formulario, incluyendo partes de la fecha.
+// Tipo para el estado interno del formulario
 type FormState = {
   parkingId?: string;
   ticketType?: string;
-  clientName?: string;
+  assignedTo?: string;
   startDay?: string;
   startMonth?: string;
   startYear?: string;
@@ -30,6 +30,7 @@ interface FilterFormProps {
   onApplyFilter: (filters: FilterValues) => void;
   currentFilterValues: FilterValues;
   incidencias: TicketOptions[];
+  assignees: string[];
 }
 
 const FilterForm: React.FC<FilterFormProps> = ({
@@ -38,10 +39,10 @@ const FilterForm: React.FC<FilterFormProps> = ({
   onApplyFilter,
   currentFilterValues,
   incidencias,
+  assignees,
 }) => {
   const [filters, setFilters] = useState<FormState>({});
 
-  // Sincroniza el estado del formulario cuando se hace visible o cambian los filtros.
   useEffect(() => {
     if (isVisible) {
       const { startDate, endDate, ...rest } = currentFilterValues;
@@ -59,7 +60,6 @@ const FilterForm: React.FC<FilterFormProps> = ({
     }
   }, [currentFilterValues, isVisible]);
 
-  // --- Filtros en Cascada ---
   const uniqueParkingIds = useMemo(() => Array.from(new Set(incidencias.map(inc => inc.parkingId))), [incidencias]);
 
   const uniqueTicketTypes = useMemo(() => {
@@ -68,29 +68,13 @@ const FilterForm: React.FC<FilterFormProps> = ({
     return Array.from(new Set(filtered.map(inc => inc.ticketType)));
   }, [incidencias, filters.parkingId]);
 
-  const uniqueClientNames = useMemo(() => {
-    let filtered = incidencias;
-    if (filters.parkingId) {
-      filtered = filtered.filter(inc => inc.parkingId === filters.parkingId);
-    }
-    if (filters.ticketType) {
-      filtered = filtered.filter(inc => inc.ticketType === filters.ticketType);
-    }
-    return Array.from(new Set(filtered.map(inc => inc.clientName).filter(Boolean)));
-  }, [incidencias, filters.parkingId, filters.ticketType]);
-  
   const uniqueYears = useMemo(() => {
-    const years = new Set(
-      incidencias
-      //pendiente
-        .map(inc => new Date(inc.creationDate).getFullYear())
-        .filter(year => !isNaN(year))
-    );
+    const years = new Set(incidencias.map(inc => new Date(inc.createdAt).getFullYear()).filter(year => !isNaN(year)));
     return Array.from(years).sort((a, b) => b - a);
   }, [incidencias]);
+
   const months = Array.from({ length: 12 }, (_, i) => ({ value: i + 1, label: new Date(0, i).toLocaleString('es', { month: 'long' }) }));
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
-
 
   if (!isVisible) {
     return null;
@@ -107,7 +91,7 @@ const FilterForm: React.FC<FilterFormProps> = ({
     const finalFilters: FilterValues = {
         parkingId: rest.parkingId || '',
         ticketType: rest.ticketType || '',
-        clientName: rest.clientName || '',
+        assignedTo: rest.assignedTo || '',
         startDate: '',
         endDate: ''
     };
@@ -152,10 +136,10 @@ const FilterForm: React.FC<FilterFormProps> = ({
         </div>
 
         <div className="form-group">
-          <label htmlFor="clientName">Nombre del Cliente:</label>
-          <select id="clientName" name="clientName" value={filters.clientName || ''} onChange={handleInputChange}>
+          <label htmlFor="assignedTo">Responsable:</label>
+          <select id="assignedTo" name="assignedTo" value={filters.assignedTo || ''} onChange={handleInputChange}>
             <option value="">Todos</option>
-            {uniqueClientNames.map(name => <option key={name} value={name}>{name}</option>)}
+            {assignees.map(name => <option key={name} value={name}>{name}</option>)}
           </select>
         </div>
 

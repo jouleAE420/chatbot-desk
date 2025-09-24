@@ -4,6 +4,9 @@ import { IconArrowBack } from '@tabler/icons-react';
 import { useWindowSize } from '../../hooks/useWindowSize'; // Asegúrate de que la ruta sea correcta
 import '../BackButton/BackButton.css'; // Importar los estilos del botón de volver
 
+
+//tenemos nuestra interfaz de las props que recibe el componente
+
 interface GenericBackButtonProps {
   text?: string;
   to?: string | number;
@@ -11,6 +14,7 @@ interface GenericBackButtonProps {
   className?: string;
 }
 
+//declaramos el componente funcional de react
 const GenericBackButton: React.FC<GenericBackButtonProps> = ({
   text = 'Volver',
   to,
@@ -33,12 +37,13 @@ const GenericBackButton: React.FC<GenericBackButtonProps> = ({
     }
   };
 
+  //contenido del boton
   const buttonContent = (
     <>
       <IconArrowBack stroke={2} /> {isMobile ? null : text}
     </>
   );
-
+//si to es una cadena y onClick no esta definido, usamos Link
   if (to && typeof to === 'string' && !onClick) {
     return (
       <Link to={to} className={`back-button ${className || ''}`}>
@@ -46,7 +51,7 @@ const GenericBackButton: React.FC<GenericBackButtonProps> = ({
       </Link>
     );
   }
-
+//si no, usamos un boton normal
   return (
     <button onClick={handleGoBack} className={`back-button ${className || ''}`}>
       {buttonContent}

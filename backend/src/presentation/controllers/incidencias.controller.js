@@ -12,9 +12,9 @@ const getIncidencias = (req, res) => {
 const updateIncidenciaStatus = (req, res) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, assignedTo } = req.body;
 
-    const updatedIncidencia = service.updateIncidenciaStatus(id, status);
+    const updatedIncidencia = service.updateIncidenciaStatus(id, status, assignedTo);
 
     if (!updatedIncidencia) {
       return res.status(404).json({ message: 'Incidencia no encontrada' });
@@ -22,7 +22,6 @@ const updateIncidenciaStatus = (req, res) => {
 
     res.status(200).json(updatedIncidencia);
   } catch (error) {
-    // Captura el error que lanzamos en el servicio si el status está vacío
     if (error.message.includes('requerido')) {
       return res.status(400).json({ message: error.message });
     }

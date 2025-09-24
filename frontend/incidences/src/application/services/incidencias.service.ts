@@ -19,13 +19,13 @@ export const getAllIncidencias = async (): Promise<TicketOptions[]> => {
   return data;
 };
 
-export const updateIncidenciaStatus = async (id: number, status: StatusType): Promise<TicketOptions> => {
+export const updateIncidenciaStatus = async (id: number, status: StatusType, assignedTo?: string): Promise<TicketOptions> => {
   const response = await fetch(`${API_URL}/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ status }),
+    body: JSON.stringify({ status, assignedTo }),
   });
   if (!response.ok) {
     throw new Error('Failed to update incidencia status');

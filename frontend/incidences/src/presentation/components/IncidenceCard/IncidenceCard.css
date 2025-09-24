@@ -99,4 +99,22 @@
   outline-color: #fff;
 }
 
+.header-right-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.assignee-icon-container {
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.7);
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.assignee-icon-container:hover {
+  color: #fff;
+}
+
 

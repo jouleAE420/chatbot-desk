@@ -1,53 +1,87 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { TicketOptions } from '../../../domain/models/incidencia';
 import { StatusType } from '../../../domain/models/incidencia';
 import { timeAgo } from '../../utils/date';
 import StarRating from '../StarRating';
-import StatusActionButtons from '../StatusActionButtons';
 import useWindowSize from '../../utils/useWindowSize';
 import './IncidenceCard.css';
+import { IconUserPlus, IconUser } from '@tabler/icons-react'; // Import Tabler Icons
+import AssignModal from '../AssignModal/AssignModal'; // Import AssignModal
+import StatusActionButtons from '../StatusActionButtons/StatusActionButtons';
+import { createPortal } from 'react-dom';
 
 interface Props {
   incidencia: TicketOptions;
   isDragging?: boolean;
-  onUpdateStatus?: (id: number, newStatus: StatusType) => void;
+  onUpdateStatus?: (id: number, newStatus: StatusType, assignedTo?: string) => void;
 }
 
-
-//const status options: StatusType[] = ['pending', 'in_progress', 'resolved'];
-//const allStatuses = new Set(status options);
-
-
-
 const IncidenceCardBase: React.FC<Props> = ({ incidencia, isDragging = false, onUpdateStatus }) => {
-  const { width } = useWindowSize(); // uso del hook para obtener el ancho de la ventana
-  //parte fundamental para que poder ocultar los botones en pantallas grandes
+  const { width } = useWindowSize();
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const [assignModalMode, setAssignModalMode] = useState<'add' | 'view' | 'edit' | 'delete'>('add');
 
-  const handleMoveClick = (newStatus: StatusType) => {
+  const handleAssignAction = (action: 'add' | 'edit' | 'delete', value?: string) => {
+    let newAssignedTo: string | undefined = incidencia.assignedTo;
+    if (action === 'add' || action === 'edit') {
+      newAssignedTo = value;
+    } else if (action === 'delete') {
+      newAssignedTo = undefined;
+    }
     if (onUpdateStatus) {
-      onUpdateStatus(incidencia.id, newStatus);
+      // When assigning/editing, the status doesn't change, only assignedTo
+      // When deleting, the status doesn't change, only assignedTo becomes undefined
+      onUpdateStatus(incidencia.id, incidencia.status, newAssignedTo);
     }
   };
 
+  const openAssignModal = (mode: 'add' | 'view') => {
+    setAssignModalMode(mode);
+    setIsAssignModalOpen(true);
+  };
+
   return (
-
-    //este sirve para cambiar el color de la tarjeta dependiendo del status
-    <div
-      className={`incidencia-card ${incidencia.status} ${isDragging ? 'dragging' : ''}`}
-    >
-
+    <div className={`incidencia-card ${incidencia.status} ${isDragging ? 'dragging' : ''}`}>
       <div className="card-header">
         <h3>{incidencia.parkingId}</h3>
-        <span className="ticket-type">{incidencia.ticketType}</span>
+        <div className="header-right-content">
+          <span className="ticket-type">{incidencia.ticketType}</span>
+          <div className="assignee-icon-container" onClick={(e) => { e.stopPropagation(); openAssignModal(incidencia.assignedTo ? 'view' : 'add'); }}>
+            {incidencia.assignedTo ? (
+              <IconUser stroke={2} size={24} className="assignee-icon" />
+            ) : (
+              <IconUserPlus stroke={2} size={24} className="assignee-icon" />
+            )}
+          </div>
+        </div>
       </div>
       <StarRating rating={incidencia.rate} />
       <p className="time-ago">Hace {timeAgo(incidencia.createdAt)}</p>
 
-      {/* Conditionally render buttons based on screen size */}
+      {/* Status Action Buttons (only for small screens, as per original design) */}
       {onUpdateStatus && width && width < 769 && (
         <div onClick={(e) => e.stopPropagation()}>
-          <StatusActionButtons status={incidencia.status} onMoveClick={handleMoveClick} />
+          <StatusActionButtons
+            status={incidencia.status}
+            assignedTo={incidencia.assignedTo}
+            onMoveClick={(newStatus, assignedTo) => {
+              if (onUpdateStatus) {
+                onUpdateStatus(incidencia.id, newStatus, assignedTo);
+              }
+            }}
+          />
         </div>
+      )}
+
+      {createPortal(
+        <AssignModal
+          isOpen={isAssignModalOpen}
+          onClose={() => setIsAssignModalOpen(false)}
+          mode={assignModalMode}
+          currentAssignee={incidencia.assignedTo}
+          onAction={handleAssignAction}
+        />,
+        document.body
       )}
     </div>
   );

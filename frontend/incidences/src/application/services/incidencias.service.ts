@@ -3,11 +3,24 @@ import { StatusType } from '../../domain/models/incidencia';
 
 const API_URL = 'http://localhost:3000/api/incidencias';
 
+// Helper function to get headers with auth token
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('token');
+  return {
+    'Content-Type': 'application/json',
+    'Authorization': token ? `Bearer ${token}` : '',
+  };
+};
+
 export const getAllIncidencias = async (): Promise<TicketOptions[]> => {
-  const response = await fetch(API_URL);
-  console.log(response);
-  
-   if (!response.ok) {
+  const response = await fetch(API_URL, {
+    headers: getAuthHeaders(),
+  });
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      console.error("Unauthorized access. Token might be invalid or expired.");
+    }
     const message = `Failed to fetch incidencias: ${response.status}`;
     throw new Error(message);
   }
@@ -22,9 +35,7 @@ export const getAllIncidencias = async (): Promise<TicketOptions[]> => {
 export const updateIncidenciaStatus = async (id: number, status: StatusType, assignedTo?: string): Promise<TicketOptions> => {
   const response = await fetch(`${API_URL}/${id}`, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: getAuthHeaders(),
     body: JSON.stringify({ status, assignedTo }),
   });
   if (!response.ok) {

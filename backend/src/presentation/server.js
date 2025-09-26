@@ -1,24 +1,34 @@
 const express = require('express');
 const cors = require('cors');
+const { connectDB } = require('../infrastructure/data/db');
 const app = express();
 const PORT = 3000;
 
-// Importar el enrutador de incidencias de la nueva ubicación
+// Importar enrutadores
 const incidenciasRoutes = require('./routes/incidencias.routes');
+const authRoutes = require('./routes/auth.routes');
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
 // Usar las rutas
-// Todas las rutas definidas en incidencias.routes.js ahora estarán bajo /api/incidencias
 app.use('/api/incidencias', incidenciasRoutes);
+app.use('/api/auth', authRoutes);
 
-// Iniciar el servidor
-app.listen(PORT, () => {
-  console.log(`Servidor escuchando en http://localhost:${PORT}`);
-  console.log('servidoractivo.');
-});
+// Conectar a la DB y luego iniciar el servidor
+(async () => {
+  try {
+    await connectDB();
+    app.listen(PORT, () => {
+      console.log(`Servidor escuchando en http://localhost:${PORT}`);
+      console.log('servidoractivo.');
+    });
+  } catch (error) {
+    console.error('Fallo al iniciar el servidor', error);
+    process.exit(1);
+  }
+})();
 
 // Workaround para mantener el proceso activo en entornos específicos de Node.js/Windows
 setInterval(() => {}, 1000 * 60 * 60);

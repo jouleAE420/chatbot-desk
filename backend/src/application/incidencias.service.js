@@ -1,22 +1,46 @@
-const repository = require('../infrastructure/data/incidencias.repository');
+const { getDB } = require('../infrastructure/data/db');
+const { ObjectId } = require('mongodb');
 
-const getIncidencias = () => {
-  const todasLasIncidencias = repository.getAll();
+const getIncidencias = async (user) => {
+  const db = getDB();
+  const incidenciasCollection = db.collection('incidencias');
+
+  let query = {};
+  if (user.role === 'technician') {
+    query = {
+      $or: [
+        { assignedTo: { $exists: false } }, // Unassigned
+        { assignedTo: null }, // Unassigned
+        { assignedTo: user.username } // Assigned to the current technician
+      ]
+    };
+  }
+  // For 'admin' and 'supervisor', the query is empty, so it fetches all.
+
+  const todasLasIncidencias = await incidenciasCollection.find(query).toArray();
   return todasLasIncidencias;
 };
 
-const updateIncidenciaStatus = (id, status, assignedTo) => {
+const updateIncidenciaStatus = async (id, status, assignedTo) => {
   if (!status) {
     throw new Error('El nuevo estado (status) es requerido');
   }
 
-  const updatedIncidencia = repository.updateStatus(id, status, assignedTo);
+  const db = getDB();
+  const incidenciasCollection = db.collection('incidencias');
 
-  if (!updatedIncidencia) {
-    return null;
+  // Ensure the ID is a valid ObjectId
+  if (!ObjectId.isValid(id)) {
+    throw new Error('ID de incidencia no válido');
   }
 
-  return updatedIncidencia;
+  const result = await incidenciasCollection.findOneAndUpdate(
+    { _id: new ObjectId(id) },
+    { $set: { status: status, assignedTo: assignedTo } },
+    { returnDocument: 'after' }
+  );
+
+  return result; // The updated document
 };
 
 module.exports = {

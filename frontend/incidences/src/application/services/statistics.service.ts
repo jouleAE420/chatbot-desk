@@ -40,3 +40,35 @@ export const calculateResolvedInLastWeek = (incidencias: TicketOptions[]): numbe
   );
   return resolvedLastWeek.length;
 };
+
+// Calculates the count of incidences grouped by ticket type
+export const calculateIncidencesByType = (incidencias: TicketOptions[]): ChartData[] => {
+  const byType = incidencias.reduce((acc, inc) => {
+    acc[inc.ticketType] = (acc[inc.ticketType] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  return Object.entries(byType).map(([name, value]) => ({ name, value }));
+};
+
+// Calculates the count of incidences grouped by assignee
+export const calculateIncidencesByAssignee = (incidencias: TicketOptions[]): ChartData[] => {
+  const withAssignee = incidencias.filter(inc => inc.assignedTo);
+  const byAssignee = withAssignee.reduce((acc, inc) => {
+    const assignee = inc.assignedTo!;
+    acc[assignee] = (acc[assignee] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  return Object.entries(byAssignee).map(([name, value]) => ({ name, value }));
+};
+
+// Calculates the count of incidences grouped by status
+export const calculateIncidencesByStatus = (incidencias: TicketOptions[]): ChartData[] => {
+  const byStatus = incidencias.reduce((acc, inc) => {
+    acc[inc.status] = (acc[inc.status] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  return Object.entries(byStatus).map(([name, value]) => ({ name, value }));
+};

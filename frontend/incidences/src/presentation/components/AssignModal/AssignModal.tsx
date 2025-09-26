@@ -9,7 +9,7 @@ interface AssignModalProps {
   currentAssignee?: string;
   onAction: (action: 'add' | 'edit' | 'delete', value?: string) => void;
 }
-
+//componente funcional de react
 const AssignModal: React.FC<AssignModalProps> = ({ isOpen, onClose, mode, currentAssignee, onAction }) => {
   const [assignedToName, setAssignedToName] = useState('');
   const [internalMode, setInternalMode] = useState(mode); // Use internal mode for view/edit toggle
@@ -22,7 +22,7 @@ const AssignModal: React.FC<AssignModalProps> = ({ isOpen, onClose, mode, curren
       setAssignedToName('');
     }
   }, [isOpen, mode, currentAssignee]);
-
+//si el modal no esta abierto, no renderizamos nada
   if (!isOpen) {
     return null;
   }
@@ -36,15 +36,16 @@ const AssignModal: React.FC<AssignModalProps> = ({ isOpen, onClose, mode, curren
     }
     onClose(); 
   };
-
+//esta funcion maneja la cancelacion y cierre del modal
   const handleCancel = () => {
     setAssignedToName('');
     onClose();
   };
-
+//declaramos una funcion que retorna el contenido del modal
   const renderContent = () => {
     switch (internalMode) {
       case 'add':
+        //aqui retornamos el JSX para el modo de agregar
         return (
           <>
             <h3>Asignar Responsable</h3>
@@ -63,6 +64,7 @@ const AssignModal: React.FC<AssignModalProps> = ({ isOpen, onClose, mode, curren
           </>
         );
       case 'view':
+        //aqui retornamos el JSX para el modo de ver
         return (
           <>
             <h3>Responsable Asignado</h3>
@@ -78,6 +80,7 @@ const AssignModal: React.FC<AssignModalProps> = ({ isOpen, onClose, mode, curren
             <button onClick={handleCancel} className="assign-modal-button cancel-view">Cerrar</button>
           </>
         );
+        //aqui retornamos el JSX para el modo de editar
       case 'edit':
         return (
           <>
@@ -97,6 +100,7 @@ const AssignModal: React.FC<AssignModalProps> = ({ isOpen, onClose, mode, curren
           </>
         );
       case 'delete':
+        //aqui retornamos el JSX para el modo de eliminar
         return (
           <>
             <h3>Eliminar Responsable</h3>
@@ -108,10 +112,12 @@ const AssignModal: React.FC<AssignModalProps> = ({ isOpen, onClose, mode, curren
           </>
         );
       default:
+        //aqui retornamos null si no coincide con ningun modo
         return null;
     }
   };
-
+  
+//retornamos el JSX del modal
   return (
     <div className="assign-modal-overlay" onClick={handleCancel}>
       <div className="assign-modal-content" onClick={(e) => e.stopPropagation()}>

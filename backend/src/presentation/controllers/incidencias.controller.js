@@ -1,20 +1,21 @@
 const service = require('../../application/incidencias.service');
 
-const getIncidencias = (req, res) => {
+const getIncidencias = async (req, res) => {
   try {
-    const todasLasIncidencias = service.getIncidencias();
+    const user = req.user; // Inyectado por authMiddleware
+    const todasLasIncidencias = await service.getIncidencias(user);
     res.status(200).json(todasLasIncidencias);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-const updateIncidenciaStatus = (req, res) => {
+const updateIncidenciaStatus = async (req, res) => {
   try {
     const { id } = req.params;
     const { status, assignedTo } = req.body;
 
-    const updatedIncidencia = service.updateIncidenciaStatus(id, status, assignedTo);
+    const updatedIncidencia = await service.updateIncidenciaStatus(id, status, assignedTo);
 
     if (!updatedIncidencia) {
       return res.status(404).json({ message: 'Incidencia no encontrada' });

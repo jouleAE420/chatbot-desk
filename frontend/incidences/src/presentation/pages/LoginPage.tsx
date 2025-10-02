@@ -48,9 +48,6 @@ const LoginPage: React.FC = () => {
           </div>
           <button type="submit" className="login-button">Iniciar Sesión</button>
         </form>
-        <p className="register-link">
-          ¿No tienes una cuenta? <Link to="/register">Regístrate</Link>
-        </p>
       </div>
     </div>
   );

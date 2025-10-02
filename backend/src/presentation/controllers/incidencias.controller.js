@@ -30,7 +30,31 @@ const updateIncidenciaStatus = async (req, res) => {
   }
 };
 
+const saveIncidencia = async (req, res) => {
+  try {
+    const result = await service.saveIncidencia(req.body);
+    res.status(201).json({ message: 'Incidencia guardada exitosamente', insertedId: result.insertedId });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al guardar la incidencia', error: error.message });
+  }
+};
+
+const saveOfflineIncidencias = async (req, res) => {
+  try {
+    const incidencias = req.body;
+    if (!Array.isArray(incidencias) || incidencias.length === 0) {
+      return res.status(400).json({ message: 'Se esperaba un array de incidencias.' });
+    }
+    const result = await service.saveOfflineIncidencias(incidencias);
+    res.status(201).json({ message: `${result.insertedCount} incidencias guardadas exitosamente.` });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al guardar las incidencias offline', error: error.message });
+  }
+};
+
 module.exports = {
   getIncidencias,
   updateIncidenciaStatus,
+  saveIncidencia,
+  saveOfflineIncidencias,
 };

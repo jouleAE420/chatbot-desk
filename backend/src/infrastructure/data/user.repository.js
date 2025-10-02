@@ -1,9 +1,12 @@
 require('dotenv').config();
 
 const useMock = process.env.USE_MOCK_DB === 'true';
+let userRepository;
 
-const userRepository = useMock
-  ? require('./user.repository.mock')
-  : require('./user.repository.mongo');
+if (useMock) {
+  userRepository = require('./user.repository.mock');
+} else {
+  userRepository = require('./user.repository.mongo');
+}
 
 module.exports = userRepository;

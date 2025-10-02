@@ -6,23 +6,12 @@ require('dotenv').config();
 const JWT_SECRET = process.env.JWT_SECRET;
 
 const registerUser = async (userData) => {
-  const { username, password, role, registrationKey } = userData;
+  const { username, password, role } = userData;
 
   // Validate role
   const validRoles = ['technician', 'supervisor', 'admin'];
   if (!validRoles.includes(role)) {
-    throw new Error('Invalid role specified');
-  }
-
-  // Check registration key for privileged roles
-  if (role === 'supervisor') {
-    if (registrationKey !== process.env.REGISTRATION_KEY_SUPERVISOR) {
-      throw new Error('Invalid registration key for supervisor');
-    }
-  } else if (role === 'admin') {
-    if (registrationKey !== process.env.REGISTRATION_KEY_ADMIN) {
-      throw new Error('Invalid registration key for admin');
-    }
+    throw new Error('Rol inválido especificado');
   }
 
   const db = getDB();
@@ -30,7 +19,7 @@ const registerUser = async (userData) => {
 
   const existingUser = await usersCollection.findOne({ username: username });
   if (existingUser) {
-    throw new Error('User already exists');
+    throw new Error('El usuario ya existe');
   }
 
   const salt = await bcrypt.genSalt(10);

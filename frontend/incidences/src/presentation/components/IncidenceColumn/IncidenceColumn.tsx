@@ -15,7 +15,7 @@ interface Props {
   onUpdateStatus: (id: number, newStatus: StatusType, assignedTo?: string) => void;
   droppableId: string;
   seeMorePath?: string;
-  onStatisticsClick: () => void;
+  onStatisticsClick?: () => void; // Changed to optional
 }
 //componente funcional de react
 const IncidenceColumn: React.FC<Props> = ({ title, toolbar, incidencias, columnClass, onUpdateStatus, droppableId, seeMorePath, onStatisticsClick }) => {
@@ -27,9 +27,11 @@ const IncidenceColumn: React.FC<Props> = ({ title, toolbar, incidencias, columnC
           {title}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             {toolbar}
-            <button onClick={onStatisticsClick} className="header-icon-button" title="Ver estadísticas">
-                <IconChartBar stroke={2} />
-            </button>
+            {onStatisticsClick && (
+              <button onClick={onStatisticsClick} className="header-icon-button" title="Ver estadísticas">
+                  <IconChartBar stroke={2} />
+              </button>
+            )}
           </div>
         </div>
       </h2>

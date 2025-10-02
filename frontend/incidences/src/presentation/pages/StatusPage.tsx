@@ -6,6 +6,8 @@ import IncidenceCardBase from '../components/IncidenceCard/IncidenceCardBase';
 import { GenericBackButton } from '../components/GenericBackButton';
 import type { ColumnState } from '../App'; 
 import FilterForm from '../components/FilterForm/FilterForm'; 
+import CategoryToolbar from '../components/CategoryToolbar/CategoryToolbar';
+import { useAuth } from '../context/AuthContext';
 
 interface Props {
   incidencias: TicketOptions[];
@@ -36,6 +38,7 @@ const StatusPage: React.FC<Props> = ({
     const { statusKey } = useParams<{ statusKey: string }>();
     const navigate = useNavigate();
     const location = useLocation();
+    const { user } = useAuth();
 
     const statusInfo = statusKey ? statusMap[statusKey] : undefined;
 
@@ -80,6 +83,16 @@ const StatusPage: React.FC<Props> = ({
         <div className={`focused-view ${statusKey}`}>
             <h2 className="column-title">{statusInfo.title}</h2>
             <GenericBackButton to="/" text="Volver al panel" />
+
+            {(statusInfo.dataValue !== StatusType.pending || (statusInfo.dataValue === StatusType.pending && user?.role === 'admin')) && (
+              <CategoryToolbar
+                onFilterButtonClick={() => onFilterButtonClick(statusInfo.dataValue)}
+                onSortChange={(order) => onSortChange(statusInfo.dataValue, order)}
+                currentSortOrder={currentColumnState.sortOrder}
+                areFiltersApplied={Object.keys(currentColumnState.currentFilterValues).length > 0}
+                onClearFilters={() => onApplyFilter(statusInfo.dataValue, {})}
+              />
+            )}
             
             {currentColumnState.isFilterFormVisible && (
                 <FilterForm

@@ -8,6 +8,7 @@ import CategoryToolbar from '../components/CategoryToolbar/CategoryToolbar';
 import FilterForm from '../components/FilterForm/FilterForm';
 import AssignModal from '../components/AssignModal/AssignModal';
 import type { ColumnState } from '../App';
+import { useAuth } from '../context/AuthContext';
 
 //definimos las props que el componente espera recibir
 interface Props {
@@ -31,6 +32,7 @@ const HomePage: React.FC<Props> = ({
   onCloseFilterForm,
   onStatisticsClick
 }) => {
+  const { user } = useAuth();
   const [assignmentInfo, setAssignmentInfo] = useState<{ incidence: TicketOptions; newStatus: StatusType } | null>(null);
 //usamos useMemo para memorizar los asignados unicos
   const assignees = useMemo(() => 
@@ -180,19 +182,19 @@ const HomePage: React.FC<Props> = ({
                   droppableId={key}
                   title={<Link to={`/${key.toLowerCase().replace(/_/g, '-')}`}>{col.title}</Link>}
                   toolbar={
-                    key !== StatusType.pending ? <CategoryToolbar
+                    <CategoryToolbar
                       onFilterButtonClick={() => onFilterButtonClick(key as StatusType | 'all')}
                       onSortChange={(order) => onSortChange(key as StatusType | 'all', order)}
                       currentSortOrder={currentColumnState.sortOrder}
                       areFiltersApplied={Object.keys(currentColumnState.currentFilterValues).length > 0} 
                       onClearFilters={() => onApplyFilter(key as StatusType | 'all', {})}
-                    /> : undefined
+                    />
                   }
                   incidencias={filteredIncidencias}
                   columnClass={key.toLowerCase().replace(/_/g, '-')}
                   onUpdateStatus={onUpdateStatus}
-                  seeMorePath={key !== StatusType.pending ? `/${key.toLowerCase().replace(/_/g, '-')}` : undefined}
-                  onStatisticsClick={onStatisticsClick && key !== StatusType.pending ? () => onStatisticsClick(key as StatusType) : undefined}
+                  seeMorePath={`/${key.toLowerCase().replace(/_/g, '-')}`}
+                  onStatisticsClick={onStatisticsClick ? () => onStatisticsClick(key as StatusType) : undefined}
                 />
                 {currentColumnState.isFilterFormVisible && (
                   <FilterForm

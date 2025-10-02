@@ -35,11 +35,6 @@ const mockLogin = async (credentials: LoginCredentials) => {
   };
 };
 
-interface RegisterCredentials extends LoginCredentials {
-  role?: string;
-  registrationKey?: string;
-}
-
 export const login = async (credentials: LoginCredentials) => {
   if (USE_MOCK_LOGIN) {
     return mockLogin(credentials);
@@ -65,30 +60,5 @@ export const login = async (credentials: LoginCredentials) => {
   } catch (error) {
     // Captura errores de red u otros problemas con fetch
     throw new Error(error instanceof Error ? error.message : 'No se pudo conectar al servidor.');
-  }
-};
-
-export const register = async (credentials: RegisterCredentials) => {
-  try {
-    const response = await fetch(`${AUTH_API_URL}/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(credentials),
-    });
-
-    if (!response.ok) {
-      try {
-        const errorData = await response.json();
-        throw new Error(errorData.message || `Error en el registro: ${response.statusText}`);
-      } catch (jsonError) {
-        throw new Error(`Error en el registro: ${response.status} ${response.statusText}`);
-      }
-    }
-
-    return response.json();
-  } catch (error) {
-    throw new Error(error instanceof Error ? error.message : 'No se pudo conectar al servidor para el registro.');
   }
 };

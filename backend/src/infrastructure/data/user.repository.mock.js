@@ -27,7 +27,14 @@ const createUser = async (userData) => {
   return Promise.resolve({ acknowledged: true, insertedId: newUser._id });
 };
 
+const findAllUsers = async () => {
+  // Return all users without their passwords
+  const usersWithoutPasswords = users.map(({ password, ...rest }) => rest);
+  return Promise.resolve(usersWithoutPasswords);
+};
+
 module.exports = {
   findUserByUsername,
   createUser,
+  findAllUsers,
 };

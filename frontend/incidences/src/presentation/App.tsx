@@ -12,7 +12,6 @@ import GeneralDashboardPage from './pages/GeneralDashboardPage';
 import Header from './components/Header';
 import StatusDashboardPage from './pages/StatusDashboardPage';
 import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import { useAuth } from './context/AuthContext';
 
@@ -35,7 +34,7 @@ function App() {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth(); // Obtenemos el usuario completo desde el contexto
   const marginTop = location.pathname === '/' ? '60px' : '80px';
-  const showHeader = !['/login', '/register'].includes(location.pathname);
+  const showHeader = location.pathname !== '/login';
 
   // Verificamos si el usuario tiene permiso para ver los dashboards
   const canViewDashboards = user?.role === 'admin' || user?.role === 'supervisor';
@@ -128,7 +127,6 @@ function App() {
       <main style={{ marginTop: showHeader ? marginTop : '0' }}>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
           <Route element={<ProtectedRoute />}>
             <Route 
               path="/" 
@@ -152,7 +150,10 @@ function App() {
             />
             <Route 
               path="/dashboard/general"
-              element={<GeneralDashboardPage incidencias={incidencias} />}
+              element={<GeneralDashboardPage 
+                incidencias={incidencias} 
+                onStatisticsClick={canViewDashboards ? handleOpenStatisticsModal : undefined} 
+              />}
             />
             <Route 
               path="/dashboard/:status"

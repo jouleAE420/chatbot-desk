@@ -1,0 +1,38 @@
+.view-switcher-container {
+  display: flex;
+  position: relative;
+  background: #2a2a3e;
+  border-radius: 30px;
+  padding: 4px;
+  width: fit-content;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.switch-option {
+  color: #a9a9b3;
+  padding: 8px 20px;
+  z-index: 1;
+  cursor: pointer;
+  transition: color 0.3s ease-in-out;
+  display: flex; /* To center icon */
+  align-items: center; /* To center icon */
+}
+
+.switch-option.active {
+  color: #fff;
+}
+
+.switch-highlight {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  height: calc(100% - 8px);
+  background: var(--color-primary);
+  border-radius: 30px;
+  transition: transform 0.3s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.view-switcher-container[data-active-view="dashboard"] .switch-highlight {
+  transform: translateX(100%);
+}

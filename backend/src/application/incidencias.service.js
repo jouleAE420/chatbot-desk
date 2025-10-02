@@ -1,10 +1,8 @@
-const { getDB } = require('../infrastructure/data/db');
-const { ObjectId } = require('mongodb');
+const repository = require('../infrastructure/data/incidencias.repository');
 
 const getIncidencias = async (user) => {
-  const db = getDB();
-  const incidenciasCollection = db.collection('incidencias');
-
+  // La lógica de filtrado por rol se mantiene aquí, en la capa de aplicación.
+  // El repositorio se encarga solo del acceso a datos.
   let query = {};
   if (user.role === 'technician') {
     query = {
@@ -17,7 +15,7 @@ const getIncidencias = async (user) => {
   }
   // For 'admin' and 'supervisor', the query is empty, so it fetches all.
 
-  const todasLasIncidencias = await incidenciasCollection.find(query).toArray();
+  const todasLasIncidencias = await repository.getAll(query);
   return todasLasIncidencias;
 };
 
@@ -25,25 +23,30 @@ const updateIncidenciaStatus = async (id, status, assignedTo) => {
   if (!status) {
     throw new Error('El nuevo estado (status) es requerido');
   }
+  return await repository.updateStatus(id, status, assignedTo);
+};
 
-  const db = getDB();
-  const incidenciasCollection = db.collection('incidencias');
+const saveIncidencia = async (incidenciaData) => {
+  const newIncidencia = {
+    ...incidenciaData,
+    createdAt: new Date(),
+    status: 'created', // Estado inicial por defecto
+  };
+  return await repository.save(newIncidencia);
+};
 
-  // Ensure the ID is a valid ObjectId
-  if (!ObjectId.isValid(id)) {
-    throw new Error('ID de incidencia no válido');
-  }
-
-  const result = await incidenciasCollection.findOneAndUpdate(
-    { _id: new ObjectId(id) },
-    { $set: { status: status, assignedTo: assignedTo } },
-    { returnDocument: 'after' }
-  );
-
-  return result; // The updated document
+const saveOfflineIncidencias = async (incidencias) => {
+  const incidenciasConFecha = incidencias.map(inc => ({
+    ...inc,
+    createdAt: new Date(),
+    status: 'created',
+  }));
+  return await repository.saveMany(incidenciasConFecha);
 };
 
 module.exports = {
   getIncidencias,
   updateIncidenciaStatus,
+  saveIncidencia,
+  saveOfflineIncidencias,
 };

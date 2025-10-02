@@ -1,5 +1,6 @@
 const { MongoClient } = require('mongodb');
 require('dotenv').config();
+const { seedDatabase } = require('./seed'); // Importar la función de seeding
 
 const uri = process.env.MONGO_URI;
 const client = new MongoClient(uri);
@@ -10,8 +11,9 @@ const connectDB = async () => {
   if (db) return db;
   try {
     await client.connect();
-    db = client.db(); // If your DB name is in the URI, this is enough.
+    db = client.db(); // Si el nombre de tu BD está en la URI, esto es suficiente.
     console.log('Conectado a MongoDB');
+    await seedDatabase(db); // Pasamos la instancia de la base de datos directamente
     return db;
   } catch (e) {
     console.error('No se pudo conectar a MongoDB', e);

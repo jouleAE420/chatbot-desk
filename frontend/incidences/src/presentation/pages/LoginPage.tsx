@@ -23,7 +23,7 @@ const LoginPage: React.FC = () => {
   return (
     <div className="login-page-container">
       <div className="login-form-container">
-        <h1 className="login-title">B2Park Incidences</h1>
+        <h1 className="login-title"><img src="/logob2park.png" alt="B2Park Logo" className="login-logo"/><span className="login-subtitle"> Incidencias</span></h1>
         <form onSubmit={handleLogin} className="login-form">
           {error && <p className="login-error">{error}</p>}
           <div className="form-group">

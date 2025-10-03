@@ -73,7 +73,7 @@ const HomePage: React.FC<Props> = ({
 //aqui se definen las columnas y las incidencias que contienen
   const columns: { [key in StatusType]: { title: string; incidencias: TicketOptions[] } } = {
     [StatusType.created]: { title: 'Creadas', incidencias: processedIncidencias.filter(inc => inc.status === StatusType.created).slice(0, 5) },
-    [StatusType.pending]: { title: 'Pendientes', incidencias: processedIncidencias.filter(inc => inc.status === StatusType.pending) },
+    [StatusType.pending]: { title: 'Pendientes', incidencias: processedIncidencias.filter(inc => inc.status === StatusType.pending).slice(0, 5) },
     [StatusType.in_progress]: { title: 'En Progreso', incidencias: processedIncidencias.filter(inc => inc.status === StatusType.in_progress).slice(0, 5) },
     [StatusType.resolved]: {
       title: 'Resueltas',
@@ -83,6 +83,7 @@ const HomePage: React.FC<Props> = ({
         .slice(0, 5),
     },
   };
+const columnOrder: StatusType[] = [StatusType.created, StatusType.pending, StatusType.in_progress, StatusType.resolved];
 //esta funcion maneja el inicio del arrastre
   const onDragStart = () => {
     document.body.classList.add('is-dragging');
@@ -148,7 +149,8 @@ const HomePage: React.FC<Props> = ({
 
       <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
         <div className="columns-container">
-          {Object.entries(columns).map(([key, col]) => {
+          {columnOrder.map((key) => {
+            const col = columns[key];
             const currentColumnState = columnStates[key as StatusType];
             let filteredIncidencias = col.incidencias;
 
@@ -216,3 +218,10 @@ const HomePage: React.FC<Props> = ({
 };
 
 export default HomePage;
+
+//notas:
+//ajustar la vista de movil en eldashboar general implementando boton hamburguesa para ver los accesos directos 
+//eliminar el compomnente que saca la propm y pide asignar un nombre del operador a la incidencia y hacerlo automaticamente con el token 
+//del usuario y ya muestra el nombre en la incidencia sin pedirlo al operador
+//ajuste en los nombres de perfiles, el tecnico se va a llamar operador, supervisor y admin sigue igual.
+//los admins podran archivar incidencias pero jamas eliminarlas ni editarlas, ahi pensar en el tema legal

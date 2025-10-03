@@ -76,13 +76,16 @@
   color: var(--color-text) !important;
 }
 
+.shortcuts-container {
+  position: sticky;
+  top: 120px;
+  align-self: start;
+}
+
 .dashboard-shortcuts {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  position: sticky;
-  top: 120px;
-  align-self: start;
 }
 
 .shortcut-button {
@@ -122,6 +125,11 @@
 
 .shortcut-button span {
   font-weight: 600;
+}
+
+.mobile-menu-button {
+  display: none; /* Oculto por defecto en escritorio */
+  z-index: 1001; /* Asegura que esté sobre otros elementos */
 }
 
 @keyframes spin {
@@ -181,9 +189,68 @@
 @media (max-width: 992px) {
   .general-dashboard {
     grid-template-columns: 1fr;
+    padding-top: 1rem;
   }
   .general-dashboard .charts-container {
     grid-template-columns: 1fr;
+  }
+
+  .shortcuts-container {
+    position: static;
+  }
+
+  .mobile-menu-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 80px;
+    right: 1.5rem;
+    background: rgba(35, 35, 50, 0.5); /* Fondo semi-transparente */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil */
+    backdrop-filter: blur(12px); /* El efecto "glass" */
+    -webkit-backdrop-filter: blur(12px); /* Para Safari */
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    cursor: pointer;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease-in-out, background 0.2s ease;
+  }
+
+  .mobile-menu-button:hover {
+    transform: scale(1.05);
+    background: rgba(35, 35, 50, 0.7);
+  }
+
+  .dashboard-shortcuts {
+    display: flex; /* Keep flex for layout */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-15px) scale(0.95);
+    transform-origin: top right;
+    transition: opacity 0.2s ease-out, transform 0.2s ease-out, visibility 0.2s;
+
+    position: fixed;
+    top: 145px;
+    right: 1.5rem;
+    background: rgba(35, 35, 50, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: var(--border-radius);
+    padding: 0.5rem;
+    z-index: 1000;
+    flex-direction: column;
+    width: 220px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .general-dashboard.mobile-menu-open .dashboard-shortcuts {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
   }
 }
 

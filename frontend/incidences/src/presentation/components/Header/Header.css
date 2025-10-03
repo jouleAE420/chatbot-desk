@@ -1,5 +1,5 @@
 .app-header {
-  background-color: transparent;
+  background-color: #000000; /* Pure black color */
   height: 120px;
   position: fixed;
   top: 0;
@@ -14,25 +14,11 @@
 
 .app-header.scrolled {
   height: 60px; /* Smaller height when scrolled */
-  background-color: rgba(26, 26, 46, 0.9); /* Slightly darker background */
+  background-color: rgba(0, 0, 0, 0.95); /* Pure black with 95% opacity */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
   justify-content: space-between; /* Added */
-}
-
-.app-header img {
-  border-radius: 8px;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  margin-bottom: 0;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.app-header.scrolled img {
-  opacity: 0; /* Hide the image when scrolled */
-  transform: translateY(-100%); /* Move it up out of view */
 }
 
 .header-title {
@@ -70,19 +56,6 @@
 
 .header-right {
   padding-right: 2rem;
-}
-
-.mini-header-title {
-  color: var(--color-secondary);
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin: 0;
-  opacity: 0; /* Start hidden */
-  transition: opacity 0.3s ease;
-}
-
-.app-header.scrolled .mini-header-title {
-  opacity: 1; /* Show when scrolled */
 }
 
 /* Styles for header actions container */
@@ -141,4 +114,14 @@
 
 .logout-button:hover {
   color: #ff4d4d;
+}
+
+.main-nav {
+  display: flex; /* Keep as flex for desktop */
+  align-items: center;
+}
+
+.header-logo {
+  height: 40px; /* Adjust as needed to fit header height */
+  vertical-align: middle;
 }

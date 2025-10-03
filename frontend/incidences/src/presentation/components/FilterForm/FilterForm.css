@@ -13,8 +13,18 @@
   padding: 2rem 0; /* Añadir espacio arriba y abajo */
 }
 
+/* Theme variables for this component (override in a parent or :root to customize) */
+:root {
+  --filter-bg: #0f1116; /* container background (darker neutral) */
+  --filter-input-bg: #0b0c10; /* input/select background (darker) */
+  --filter-input-border: #1f2126; /* input/select border (subtle) */
+  --filter-apply-bg: #f6a33b; /* apply button background (primary) */
+  --filter-apply-hover: #f68e2e; /* apply button hover */
+  --filter-title-color: #F68E2E; /* título: Filtrar incidencias */
+}
+
 .filter-form-container {
-  background-color: #2a2a3e;
+  background-color: var(--filter-bg);
   padding: 2rem;
   border-radius: var(--border-radius);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
@@ -46,7 +56,7 @@
 .filter-form-header h3 {
   margin: 0;
   font-size: 1.5rem;
-  color: var(--color-secondary);
+  color: var(--filter-title-color);
 }
 
 .close-button {
@@ -76,8 +86,8 @@
   width: 100%;
   padding: 0.75rem;
   border-radius: 8px;
-  border: 1px solid #4a4a5a;
-  background-color: #1a1a2e;
+  border: 1px solid var(--filter-input-border);
+  background-color: var(--filter-input-bg);
   color: var(--color-text);
   font-family: var(--font-family);
   font-size: 1rem;
@@ -103,12 +113,12 @@
 }
 
 .apply-button {
-  background-color: var(--color-secondary);
+  background-color: var(--filter-apply-bg);
   color: var(--color-bg);
 }
 
 .apply-button:hover {
-  background-color: #ffdf4d;
+  background-color: var(--filter-apply-hover);
 }
 
 .clear-button {

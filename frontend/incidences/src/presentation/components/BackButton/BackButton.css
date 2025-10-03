@@ -4,7 +4,7 @@
   left: 2rem;
   font-size: 1.1rem;
   color: var(--color-bg);
-  background-color: var(--color-secondary);
+  background-color: #F68E2E;
   padding: 0.6rem 1.2rem;
   border-radius: 8px;
   text-decoration: none;
@@ -20,8 +20,8 @@
 }
 
 .back-button:hover {
-  background-color: var(--color-text);
-  color: var(--color-secondary);
+  background-color: #D87C22;
+  color: var(--color-bg);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
   transform: translateY(-2px);
 }

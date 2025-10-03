@@ -1,7 +1,7 @@
 .status-column {
   flex: 1;
   position: relative; /* Needed for the pseudo-element */
-  padding: 1.5rem;
+  padding: 1rem;
   /* Background, filter, etc., are now in the ::before pseudo-element */
 }
 
@@ -114,7 +114,7 @@
   margin-top: 1rem;
   padding: 0.6rem 1.2rem;
   color: var(--color-bg);
-  background-color: var(--color-secondary);
+  background-color: #F68E2E;
   text-decoration: none;
   font-weight: 700;
   border-radius: 8px;
@@ -124,8 +124,8 @@
 }
 
 .see-more-link:hover {
-  background-color: var(--color-text);
-  color: var(--color-secondary);
+  background-color: #E57320;
+  color: white;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
   transform: translateY(-2px);
 }

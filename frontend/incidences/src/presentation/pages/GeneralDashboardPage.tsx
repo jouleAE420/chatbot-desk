@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import type { TicketOptions } from '../../domain/models/incidencia';
 import { StatusType } from '../../domain/models/incidencia';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
@@ -7,6 +7,8 @@ import {
   IconMessageReport,
   IconLoader2,
   IconCircleCheck,
+  IconMenu2,
+  IconX,
 } from '@tabler/icons-react';
 import './GeneralDashboardPage.css';
 
@@ -18,26 +20,36 @@ interface Props {
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 const GeneralDashboardPage: React.FC<Props> = ({ incidencias, onStatisticsClick }) => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const byStatus = useMemo(() => calculateIncidencesByStatus(incidencias), [incidencias]);
   const byType = useMemo(() => calculateIncidencesByType(incidencias), [incidencias]);
   const byAssignee = useMemo(() => calculateIncidencesByAssignee(incidencias), [incidencias]);
 
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   return (
-    <div className="general-dashboard">
+    <div className={`general-dashboard ${isMobileMenuOpen ? 'mobile-menu-open' : ''}`}>
       {onStatisticsClick && (
-        <div className="dashboard-shortcuts">
-          <button onClick={() => onStatisticsClick(StatusType.created)} className="shortcut-button shortcut-created" title="Dashboard Creadas">
-            <IconMessageReport stroke={2} className="created-icon" />
-            <span>Creadas</span>
+        <div className="shortcuts-container">
+          <button className="mobile-menu-button" onClick={toggleMobileMenu}>
+            {isMobileMenuOpen ? <IconX /> : <IconMenu2 />}
           </button>
-          <button onClick={() => onStatisticsClick(StatusType.in_progress)} className="shortcut-button shortcut-in-progress" title="Dashboard En Progreso">
-            <IconLoader2 stroke={2} className="in-progress-icon" />
-            <span>En Progreso</span>
-          </button>
-          <button onClick={() => onStatisticsClick(StatusType.resolved)} className="shortcut-button shortcut-resolved" title="Dashboard Resueltas">
-            <IconCircleCheck stroke={2} className="resolved-icon" />
-            <span>Resueltas</span>
-          </button>
+          <div className="dashboard-shortcuts">
+            <button onClick={() => onStatisticsClick(StatusType.created)} className="shortcut-button shortcut-created" title="Dashboard Creadas">
+              <IconMessageReport stroke={2} className="created-icon" />
+              <span>Creadas</span>
+            </button>
+            <button onClick={() => onStatisticsClick(StatusType.in_progress)} className="shortcut-button shortcut-in-progress" title="Dashboard En Progreso">
+              <IconLoader2 stroke={2} className="in-progress-icon" />
+              <span>En Progreso</span>
+            </button>
+            <button onClick={() => onStatisticsClick(StatusType.resolved)} className="shortcut-button shortcut-resolved" title="Dashboard Resueltas">
+              <IconCircleCheck stroke={2} className="resolved-icon" />
+              <span>Resueltas</span>
+            </button>
+          </div>
         </div>
       )}
 

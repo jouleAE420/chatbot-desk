@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import './App.css';
 import type { TicketOptions } from '../domain/models/incidencia';
@@ -35,6 +35,13 @@ function App() {
   const { isAuthenticated, user } = useAuth(); // Obtenemos el usuario completo desde el contexto
   const marginTop = location.pathname === '/' ? '60px' : '80px';
   const showHeader = location.pathname !== '/login';
+
+  const assignees = useMemo(() => {
+    const allAssignees = incidencias
+      .map(inc => inc.assignedTo)
+      .filter((assignee): assignee is string => !!assignee);
+    return Array.from(new Set(allAssignees));
+  }, [incidencias]);
 
   // Verificamos si el usuario tiene permiso para ver los dashboards
   const canViewDashboards = user?.role === 'admin' || user?.role === 'supervisor';
@@ -170,6 +177,7 @@ function App() {
                   onApplyFilter={handleApplyFilter}
                   onSortChange={handleSortChange}
                   onCloseFilterForm={handleCloseFilterForm}
+                  assignees={assignees}
                 />
               } 
             />

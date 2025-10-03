@@ -41,7 +41,7 @@ const StatusDashboardPage: React.FC<Props> = ({ incidencias }) => {
 
       <div className="kpi-container">
         <div className="kpi-card">
-          <h2>Total en "{status}"</h2>
+          <h2>Total de incidencias</h2>
           <p>{filteredIncidences.length}</p>
         </div>
       </div>

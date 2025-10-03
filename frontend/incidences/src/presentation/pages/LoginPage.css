@@ -1,24 +1,15 @@
-.login-page-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: var(--color-bg);
-}
-
-.login-form-container {
-  padding: 3rem;
-  background: var(--color-card-bg);
-  border-radius: var(--border-radius);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  width: 100%;
-  max-width: 400px;
-  text-align: center;
-}
-
 .login-title {
   color: var(--color-secondary);
-  margin-bottom: 2rem;
+  margin-bottom: 0.5rem; /* Reset margin-bottom */
+  position: relative; /* Keep relative for positioning the arrow span */
+  text-align: center; /* Center the content of h1 */
+}
+
+.login-subtitle {
+  display: block; /* Make it a block element */
+  margin-top: 10px; /* Increased space between logo and text */
+  color: var(--color-text); /* Or white, depending on preference */
+  font-size: 4rem; /* Increased font size */
 }
 
 .login-form .form-group {
@@ -47,7 +38,7 @@
   padding: 0.75rem;
   border: none;
   border-radius: 5px;
-  background-color: var(--color-secondary);
+  background-color: #F68E2E;
   color: #1a1a2e;
   font-weight: 700;
   font-size: 1rem;
@@ -62,4 +53,10 @@
 .login-error {
   color: var(--color-primary);
   margin-bottom: 1rem;
+}
+
+.login-logo {
+  height: 100px; /* Increased height */
+  display: block;
+  margin: 0 auto; /* Center the block element */
 }

@@ -33,7 +33,7 @@ export const getAllIncidencias = async (): Promise<TicketOptions[]> => {
 };
 
 export const updateIncidenciaStatus = async (id: number, status: StatusType, assignedTo?: string): Promise<TicketOptions> => {
-  const response = await fetch(`${API_URL}/${id}`, {
+  const response = await fetch(`${API_URL}/${id}/status`, {
     method: 'PUT',
     headers: getAuthHeaders(),
     body: JSON.stringify({ status, assignedTo }),

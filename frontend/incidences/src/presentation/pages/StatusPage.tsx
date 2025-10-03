@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import type { TicketOptions } from '../../domain/models/incidencia';
 import { StatusType } from '../../domain/models/incidencia';
@@ -6,7 +6,6 @@ import IncidenceCardBase from '../components/IncidenceCard/IncidenceCardBase';
 import { GenericBackButton } from '../components/GenericBackButton';
 import type { ColumnState } from '../App'; 
 import FilterForm from '../components/FilterForm/FilterForm'; 
-import CategoryToolbar from '../components/CategoryToolbar/CategoryToolbar';
 import { useAuth } from '../context/AuthContext';
 
 interface Props {
@@ -39,6 +38,11 @@ const StatusPage: React.FC<Props> = ({
     const navigate = useNavigate();
     const location = useLocation();
     const { user } = useAuth();
+
+    const assignees = useMemo(() => {
+        const allAssignees = incidencias.map(inc => inc.assignedTo).filter((name): name is string => !!name);
+        return Array.from(new Set(allAssignees));
+    }, [incidencias]);
 
     const statusInfo = statusKey ? statusMap[statusKey] : undefined;
 
@@ -84,15 +88,6 @@ const StatusPage: React.FC<Props> = ({
             <h2 className="column-title">{statusInfo.title}</h2>
             <GenericBackButton to="/" text="Volver al panel" />
 
-            {(statusInfo.dataValue !== StatusType.pending || (statusInfo.dataValue === StatusType.pending && user?.role === 'admin')) && (
-              <CategoryToolbar
-                onFilterButtonClick={() => onFilterButtonClick(statusInfo.dataValue)}
-                onSortChange={(order) => onSortChange(statusInfo.dataValue, order)}
-                currentSortOrder={currentColumnState.sortOrder}
-                areFiltersApplied={Object.keys(currentColumnState.currentFilterValues).length > 0}
-                onClearFilters={() => onApplyFilter(statusInfo.dataValue, {})}
-              />
-            )}
             
             {currentColumnState.isFilterFormVisible && (
                 <FilterForm
@@ -100,7 +95,8 @@ const StatusPage: React.FC<Props> = ({
                   onClose={() => onCloseFilterForm(statusInfo.dataValue)} // Correctly using the prop
                   onApplyFilter={(filters) => onApplyFilter(statusInfo.dataValue, filters)}
                   currentFilterValues={currentColumnState.currentFilterValues}
-                  incidencias={incidencias} 
+                  incidencias={incidencias}
+                  assignees={assignees} 
                 />
             )}
 

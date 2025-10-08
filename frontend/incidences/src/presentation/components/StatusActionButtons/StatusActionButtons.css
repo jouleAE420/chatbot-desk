@@ -7,7 +7,8 @@
 }
 
 .action-button-move {
-  flex-grow: 1;
+  flex-basis: auto;
+  flex-shrink: 0;
   border: 1px solid rgba(255, 255, 255, 0.2);
   background-color: rgba(255, 255, 255, 0.05);
   color: var(--color-text);
@@ -25,6 +26,16 @@
 .action-button-move:hover {
   background-color: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.4);
+}
+
+.action-button-move.-unassign {
+  background-color: rgba(128, 128, 128, 0.2); /* A light grey */
+  border-color: rgba(128, 128, 128, 0.4);
+  color: var(--color-text); /* White text for contrast */
+}
+.action-button-move.-unassign:hover {
+  background-color: rgba(128, 128, 128, 0.3); /* Slightly darker on hover */
+  border-color: rgba(128, 128, 128, 0.6);
 }
 
 /* Color coding for move buttons */

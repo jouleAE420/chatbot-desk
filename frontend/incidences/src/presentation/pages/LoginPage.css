@@ -1,5 +1,5 @@
 .login-title {
-  color: var(--color-secondary);
+  color: var(--color-status-in-progress);
   margin-bottom: 0.5rem; /* Reset margin-bottom */
   position: relative; /* Keep relative for positioning the arrow span */
   text-align: center; /* Center the content of h1 */
@@ -38,7 +38,7 @@
   padding: 0.75rem;
   border: none;
   border-radius: 5px;
-  background-color: #F68E2E;
+  background-color: #f3ca25;
   color: #1a1a2e;
   font-weight: 700;
   font-size: 1rem;
@@ -51,7 +51,7 @@
 }
 
 .login-error {
-  color: var(--color-primary);
+  color: var(--color-status-created);
   margin-bottom: 1rem;
 }
 

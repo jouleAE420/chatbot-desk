@@ -41,39 +41,39 @@
 }
 
 .created .column-title {
-  color: var(--color-primary);
-  border-color: var(--color-primary);
+  color: var(--color-status-created);
+  border-color: var(--color-status-created);
 }
 
 .pending .column-title {
-  color: var(--color-quaternary);
-  border-color: var(--color-quaternary);
+  color: var(--color-status-pending);
+  border-color: var(--color-status-pending);
 }
 
 .in-progress .column-title {
-  color: var(--color-secondary);
-  border-color: var(--color-secondary);
+  color: var(--color-status-in-progress);
+  border-color: var(--color-status-in-progress);
 }
 
 .resolved .column-title {
-  color: var(--color-tertiary);
-  border-color: var(--color-tertiary);
+  color: var(--color-status-resolved);
+  border-color: var(--color-status-resolved);
 }
 
 .created .incidencia-card {
-  border-left: 5px solid var(--color-primary);
+  border-left: 5px solid var(--color-status-created);
 }
 
 .pending .incidencia-card {
-  border-left: 5px solid var(--color-quaternary);
+  border-left: 5px solid var(--color-status-pending);
 }
 
 .in-progress .incidencia-card {
-  border-left: 5px solid var(--color-secondary);
+  border-left: 5px solid var(--color-status-in-progress);
 }
 
 .resolved .incidencia-card {
-  border-left: 5px solid var(--color-tertiary);
+  border-left: 5px solid var(--color-status-resolved);
 }
 
 @media (max-width: 768px) {
@@ -114,7 +114,7 @@
   margin-top: 1rem;
   padding: 0.6rem 1.2rem;
   color: var(--color-bg);
-  background-color: #F68E2E;
+  background-color: #f3ca25;
   text-decoration: none;
   font-weight: 700;
   border-radius: 8px;
@@ -124,8 +124,8 @@
 }
 
 .see-more-link:hover {
-  background-color: #E57320;
-  color: white;
+  background-color: #fdeda6;
+  color: rgb(0, 0, 0);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
   transform: translateY(-2px);
 }

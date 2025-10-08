@@ -8,24 +8,13 @@ const client = new MongoClient(uri);
 let db;
 
 const connectDB = async () => {
-  if (db) return db;
-  try {
-    await client.connect();
-    db = client.db(); // Si el nombre de tu BD está en la URI, esto es suficiente.
-    console.log('Conectado a MongoDB');
-    await seedDatabase(db); // Pasamos la instancia de la base de datos directamente
-    return db;
-  } catch (e) {
-    console.error('No se pudo conectar a MongoDB', e);
-    process.exit(1);
-  }
+  console.log('Database connection is disabled (using mock data).');
+  return Promise.resolve();
 };
 
 const getDB = () => {
-  if (!db) {
-    throw new Error('La base de datos no está inicializada. Llama a connectDB primero.');
-  }
-  return db;
+  // When using mock data, there is no DB instance.
+  return null;
 };
 
 module.exports = { connectDB, getDB };

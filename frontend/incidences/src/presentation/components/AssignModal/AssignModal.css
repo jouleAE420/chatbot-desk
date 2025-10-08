@@ -40,7 +40,7 @@
 
 .assign-modal-content h3 {
   margin-top: 0;
-  color: var(--color-secondary); /* from filter-form-header h3 */
+  color: var(--color-status-in-progress); /* from filter-form-header h3 */
   font-size: 1.5em;
 }
 
@@ -89,7 +89,7 @@
 
 /* Assign/Confirm button styled like apply-button */
 .assign-modal-button.assign {
-  background-color: var(--color-secondary);
+  background-color: var(--color-status-in-progress);
   color: var(--color-bg);
 }
 
@@ -106,7 +106,7 @@
 .assignee-name {
   font-size: 1.2em;
   font-weight: bold;
-  color: var(--color-secondary); /* Changed to match theme */
+  color: var(--color-status-in-progress); /* Changed to match theme */
   margin-bottom: 20px;
 }
 

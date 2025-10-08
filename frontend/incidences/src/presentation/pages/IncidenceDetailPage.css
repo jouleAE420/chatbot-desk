@@ -157,34 +157,34 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(0, 0, 0, 0.85);
     padding: 1rem;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
     z-index: 1000;
     backdrop-filter: blur(5px);
   }
 
   /* Estilos para intensificar los colores de los botones en la barra de acciones móvil */
   .mobile-actions-bar .action-button-move {
-    background-color: var(--color-primary); /* Usar color primario sólido por defecto */
-    border-color: var(--color-primary);
+    background-color: var(--color-status-created); /* Usar color primario sólido por defecto */
+    border-color: var(--color-status-created);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
     backdrop-filter: none; /* Eliminar el desenfoque */
   }
 
   .mobile-actions-bar .action-button-move.-to-pending {
-    background-color: var(--color-quaternary); /* Color sólido de la categoría */
-    border-color: var(--color-quaternary);
+    background-color: var(--color-status-pending); /* Color sólido de la categoría */
+    border-color: var(--color-status-pending);
   }
 
   .mobile-actions-bar .action-button-move.-to-progress {
-    background-color: var(--color-secondary); /* Color sólido de la categoría */
-    border-color: var(--color-secondary);
+    background-color: var(--color-status-in-progress); /* Color sólido de la categoría */
+    border-color: var(--color-status-in-progress);
   }
 
   .mobile-actions-bar .action-button-move.-to-resolved {
-    background-color: var(--color-tertiary); /* Color sólido de la categoría */
-    border-color: var(--color-tertiary);
+    background-color: var(--color-status-resolved); /* Color sólido de la categoría */
+    border-color: var(--color-status-resolved);
   }
 
   /* Ajustar los estados hover para que sigan siendo más intensos */

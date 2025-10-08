@@ -14,9 +14,9 @@ const USE_MOCK_LOGIN = import.meta.env.VITE_USE_MOCK_LOGIN === 'true';
 const mockLogin = async (credentials: LoginCredentials) => {
   // Puedes personalizar los usuarios simulados aquí
   const users = [
-    { username: 'admin', password: 'admin', role: 'admin' },
-    { username: 'supervisor', password: 'supervisor', role: 'supervisor' },
-    { username: 'tech', password: 'tech', role: 'technician' },
+    { username: 'admin', password: 'Admin1234', role: 'admin' },
+    { username: 'supervisor', password: 'Super123', role: 'supervisor' },
+    { username: 'tech', password: 'Tech12345', role: 'technician' },
   ];
   const user = users.find(
     u => u.username === credentials.username && u.password === credentials.password

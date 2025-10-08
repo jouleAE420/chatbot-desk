@@ -9,14 +9,15 @@
   /* NEW: Add a transparent outline for a smooth transition effect */
   outline: 2px solid transparent;
   outline-offset: 4px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease, outline-color 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, outline-color 0.3s ease, background-color 0.3s ease;
   overflow-wrap: break-word; /* Asegura que el texto largo se ajuste */
-  overflow: hidden; /* To contain the hover button */
+  /* Removed overflow: hidden; */
 }
 
 .incidencia-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  background-color: rgba(255, 255, 255, 0.12);
 }
 
 .incidencia-card h3 {
@@ -35,7 +36,7 @@
 }
 
 .action-button-primary {
-  background-color: var(--color-secondary);
+  background-color: var(--color-status-in-progress);
   color: #1a1a2e;
   border: none;
   border-radius: 8px; /* More modern radius */
@@ -117,4 +118,90 @@
   color: #fff;
 }
 
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.75rem;
+}
 
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Assignee Info Modal Styles */
+.assignee-info-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  transition: background-color 0.3s ease;
+}
+
+.assignee-info-modal-content {
+  background: #2c2c3a;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.assignee-info-modal-content h4 {
+  margin-top: 0;
+  color: var(--color-text);
+}
+
+.assignee-name {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--color-status-in-progress);
+  margin: 1rem 0;
+  margin-bottom: 1.5rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  width: 100%;
+}
+
+.modal-actions button {
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.modal-actions button:active {
+  transform: scale(0.98);
+}
+
+.button-secondary {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.button-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.button-danger {
+  background-color: var(--color-status-created);
+  color: white;
+}
+
+.button-danger:hover {
+  background-color: #c82333; /* Darker red */
+}

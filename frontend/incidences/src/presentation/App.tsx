@@ -21,6 +21,7 @@ export type ColumnState = {
   sortOrder: 'asc' | 'desc';
   isFilterFormVisible: boolean;
   currentFilterValues: any;
+  currentPage: number;
 };
 //la funcion App es el componente principal de la aplicacion
 //el cual sirve como contenedor de todos los demas componentes
@@ -47,12 +48,17 @@ function App() {
   const canViewDashboards = user?.role === 'admin' || user?.role === 'supervisor';
 
   const [columnStates, setColumnStates] = useState<Record<StatusType | 'all', ColumnState>>({
-    [StatusType.created]: { filterText: '', sortOrder: 'asc', isFilterFormVisible: false, currentFilterValues: {} },
-    [StatusType.pending]: { filterText: '', sortOrder: 'asc', isFilterFormVisible: false, currentFilterValues: {} },
-    [StatusType.in_progress]: { filterText: '', sortOrder: 'asc', isFilterFormVisible: false, currentFilterValues: {} },
-    [StatusType.resolved]: { filterText: '', sortOrder: 'asc', isFilterFormVisible: false, currentFilterValues: {} },
-    all: { filterText: '', sortOrder: 'asc', isFilterFormVisible: false, currentFilterValues: {} },
+    [StatusType.created]: { filterText: '', sortOrder: 'asc', isFilterFormVisible: false, currentFilterValues: {}, currentPage: 1 },
+    [StatusType.pending]: { filterText: '', sortOrder: 'asc', isFilterFormVisible: false, currentFilterValues: {}, currentPage: 1 },
+    [StatusType.in_progress]: { filterText: '', sortOrder: 'asc', isFilterFormVisible: false, currentFilterValues: {}, currentPage: 1 },
+    [StatusType.resolved]: { filterText: '', sortOrder: 'asc', isFilterFormVisible: false, currentFilterValues: {}, currentPage: 1 },
+    all: { filterText: '', sortOrder: 'asc', isFilterFormVisible: false, currentFilterValues: {}, currentPage: 1 },
   });
+
+  const handlePageChange = (status: StatusType, newPage: number) => {
+    setColumnStates(prev => ({ ...prev, [status]: { ...prev[status], currentPage: newPage } }));
+  };
+
 //esta funcion maneja la apertura del modal de estadisticas
   const handleOpenStatisticsModal = (status: StatusType | 'all') => {
     const from = location.pathname;
@@ -178,6 +184,7 @@ function App() {
                   onSortChange={handleSortChange}
                   onCloseFilterForm={handleCloseFilterForm}
                   assignees={assignees}
+                  onPageChange={handlePageChange}
                 />
               } 
             />

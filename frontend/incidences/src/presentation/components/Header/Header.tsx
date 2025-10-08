@@ -51,7 +51,7 @@ const Header: React.FC<HeaderProps> = ({
   return (
     <header className="app-header scrolled">
       <div className="header-left">
-        <img src="/logob2park.png" alt="B2Park Logo" className="header-logo"/>
+        <img src="/accesblanco.png" alt="B2Park Logo" className="header-logo"/>
         <nav className="main-nav">
           <div className="header-actions">
             {canViewDashboards && (

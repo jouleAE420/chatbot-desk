@@ -1,21 +1,8 @@
 const repository = require('../infrastructure/data/incidencias.repository');
 
 const getIncidencias = async (user) => {
-  // La lógica de filtrado por rol se mantiene aquí, en la capa de aplicación.
-  // El repositorio se encarga solo del acceso a datos.
-  let query = {};
-  if (user.role === 'technician') {
-    query = {
-      $or: [
-        { assignedTo: { $exists: false } }, // Unassigned
-        { assignedTo: null }, // Unassigned
-        { assignedTo: user.username } // Assigned to the current technician
-      ]
-    };
-  }
-  // For 'admin' and 'supervisor', the query is empty, so it fetches all.
-
-  const todasLasIncidencias = await repository.getAll(query);
+  // Now all roles can see all incidents.
+  const todasLasIncidencias = await repository.getAll({});
   return todasLasIncidencias;
 };
 

@@ -61,11 +61,11 @@
 /* --- Theme Styles --- */
 .theme-resolved .kpi-card,
 .theme-resolved .chart {
-  border-top: 4px solid var(--color-tertiary);
+  border-top: 4px solid var(--color-status-resolved);
 }
 
 .theme-resolved .kpi-card p {
-  color: var(--color-tertiary);
+  color: var(--color-status-resolved);
 }
 
 /* Recharts style overrides for dark theme */

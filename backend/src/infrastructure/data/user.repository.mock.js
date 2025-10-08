@@ -4,6 +4,43 @@ const bcrypt = require('bcryptjs');
 let users = [];
 let nextUserId = 1;
 
+const seedUsers = async () => {
+    if (users.length > 0) return;
+
+    const usersToSeed = [
+        {
+            username: 'admin',
+            password: 'admin',
+            role: 'admin',
+        },
+        {
+            username: 'tech',
+            password: 'tech',
+            role: 'technician',
+        },
+        {
+            username: 'supervisor',
+            password: 'supervisor',
+            role: 'supervisor',
+        }
+    ];
+
+    for (const user of usersToSeed) {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(user.password, salt);
+
+        users.push({
+            _id: nextUserId++,
+            username: user.username,
+            password: hashedPassword,
+            role: user.role,
+        });
+    }
+};
+
+// Seed the users when the module is loaded
+seedUsers();
+
 const findUserByUsername = async (username) => {
   const user = users.find(u => u.username === username);
   return Promise.resolve(user); // Return a promise to mimic async DB call

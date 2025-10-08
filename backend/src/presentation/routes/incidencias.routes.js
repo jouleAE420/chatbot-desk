@@ -5,7 +5,7 @@ const { verifyToken } = require('../middleware/auth.middleware');
 
 // Define las rutas y las conecta con sus funciones controladoras
 // Todas las rutas de incidencias requieren autenticación
-router.use(verifyToken);
+// router.use(verifyToken);
 
 router.get('/', controller.getIncidencias);
 router.put('/:id/status', controller.updateIncidenciaStatus);

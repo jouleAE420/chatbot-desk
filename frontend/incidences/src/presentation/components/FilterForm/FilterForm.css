@@ -13,14 +13,13 @@
   padding: 2rem 0; /* Añadir espacio arriba y abajo */
 }
 
-/* Theme variables for this component (override in a parent or :root to customize) */
 :root {
-  --filter-bg: #0f1116; /* container background (darker neutral) */
-  --filter-input-bg: #0b0c10; /* input/select background (darker) */
-  --filter-input-border: #1f2126; /* input/select border (subtle) */
-  --filter-apply-bg: #f6a33b; /* apply button background (primary) */
-  --filter-apply-hover: #f68e2e; /* apply button hover */
-  --filter-title-color: #F68E2E; /* título: Filtrar incidencias */
+  --filter-bg: #0f1116; 
+  --filter-input-bg: #0b0c10;
+  --filter-input-border: #1f2126; 
+  --filter-apply-bg: #f3ca25; 
+  --filter-apply-hover: #fdeda6; 
+  --filter-title-color: #f3ca25; 
 }
 
 .filter-form-container {

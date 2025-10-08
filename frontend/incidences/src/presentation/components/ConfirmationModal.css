@@ -1,0 +1,70 @@
+.confirmation-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+}
+
+.confirmation-modal-content {
+  background: #2c2c3a;
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 90%;
+  max-width: 400px;
+}
+
+.confirmation-modal-content h4 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+}
+
+.confirmation-modal-body {
+  margin-bottom: 1.5rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.confirmation-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.confirmation-modal-actions button {
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.confirmation-modal-actions button:active {
+  transform: scale(0.98);
+}
+
+.button-cancel {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.button-cancel:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.button-confirm {
+  background-color: var(--color-status-created);
+  color: white;
+}
+
+.button-confirm:hover {
+  background-color: #c82333; /* Darker red */
+}

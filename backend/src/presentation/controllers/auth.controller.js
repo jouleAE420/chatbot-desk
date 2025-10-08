@@ -1,5 +1,6 @@
+//esta const sirve para manejar las rutas de autenticacion
 const authService = require('../../application/auth.service');
-
+//la funcion register sirve para registrar un usuario
 const register = async (req, res) => {
   try {
     const { username, password, role } = req.body;

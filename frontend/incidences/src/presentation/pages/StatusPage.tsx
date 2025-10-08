@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import type { TicketOptions } from '../../domain/models/incidencia';
 import { StatusType } from '../../domain/models/incidencia';
@@ -7,6 +7,8 @@ import { GenericBackButton } from '../components/GenericBackButton';
 import type { ColumnState } from '../App'; 
 import FilterForm from '../components/FilterForm/FilterForm'; 
 import { useAuth } from '../context/AuthContext';
+import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react';
+import './StatusPage.css'; // Import the new CSS file
 
 interface Props {
   incidencias: TicketOptions[];
@@ -15,7 +17,8 @@ interface Props {
   onFilterButtonClick: (status: StatusType) => void;
   onApplyFilter: (status: StatusType, filters: any) => void;
   onSortChange: (status: StatusType, sortOrder: 'asc' | 'desc') => void;
-  onCloseFilterForm: (status: StatusType) => void; // Added prop
+  onCloseFilterForm: (status: StatusType) => void;
+  onPageChange: (status: StatusType, newPage: number) => void;
 }
 
 const statusMap: { [key: string]: { dataValue: StatusType; title: string } } = {
@@ -32,12 +35,14 @@ const StatusPage: React.FC<Props> = ({
     onFilterButtonClick,
     onApplyFilter,
     onSortChange,
-    onCloseFilterForm // Destructured prop
+    onCloseFilterForm,
+    onPageChange
 }) => {
     const { statusKey } = useParams<{ statusKey: string }>();
     const navigate = useNavigate();
     const location = useLocation();
     const { user } = useAuth();
+    const itemsPerPage = 8;
 
     const assignees = useMemo(() => {
         const allAssignees = incidencias.map(inc => inc.assignedTo).filter((name): name is string => !!name);
@@ -56,6 +61,7 @@ const StatusPage: React.FC<Props> = ({
     }
 
     const currentColumnState = columnStates[statusInfo.dataValue];
+    const currentPage = currentColumnState.currentPage;
     
     let filteredIncidencias = incidencias.filter(
         inc => inc.status === statusInfo.dataValue
@@ -83,6 +89,12 @@ const StatusPage: React.FC<Props> = ({
         filteredIncidencias.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     }
 
+    const totalPages = Math.ceil(filteredIncidencias.length / itemsPerPage);
+    const paginatedIncidencias = filteredIncidencias.slice(
+      (currentPage - 1) * itemsPerPage,
+      currentPage * itemsPerPage
+    );
+
     return (
         <div className={`focused-view ${statusKey}`}>
             <h2 className="column-title">{statusInfo.title}</h2>
@@ -92,7 +104,7 @@ const StatusPage: React.FC<Props> = ({
             {currentColumnState.isFilterFormVisible && (
                 <FilterForm
                   isVisible={currentColumnState.isFilterFormVisible}
-                  onClose={() => onCloseFilterForm(statusInfo.dataValue)} // Correctly using the prop
+                  onClose={() => onCloseFilterForm(statusInfo.dataValue)}
                   onApplyFilter={(filters) => onApplyFilter(statusInfo.dataValue, filters)}
                   currentFilterValues={currentColumnState.currentFilterValues}
                   incidencias={incidencias}
@@ -101,7 +113,7 @@ const StatusPage: React.FC<Props> = ({
             )}
 
             <div className="focused-grid">
-                {filteredIncidencias.map(incidencia => (
+                {paginatedIncidencias.map(incidencia => (
                     <div
                         key={incidencia.id}
                         style={{ cursor: 'pointer' }}
@@ -113,6 +125,20 @@ const StatusPage: React.FC<Props> = ({
                         />
                     </div>
                 ))}
+            </div>
+
+            <div className="pagination-controls">
+              <button onClick={() => onPageChange(statusInfo.dataValue, Math.max(currentPage - 1, 1))} disabled={currentPage === 1}>
+                <IconArrowLeft size={16} />
+                <span>Anterior</span>
+              </button>
+              <span>
+                Página {currentPage} de {totalPages}
+              </span>
+              <button onClick={() => onPageChange(statusInfo.dataValue, Math.min(currentPage + 1, totalPages))} disabled={currentPage === totalPages}>
+                <span>Siguiente</span>
+                <IconArrowRight size={16} />
+              </button>
             </div>
         </div>
     );

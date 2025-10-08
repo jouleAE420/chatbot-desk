@@ -1,6 +1,6 @@
 .star-rating {
   margin-bottom: 0.75rem;
-  color: var(--color-secondary);
+  color: var(--color-status-in-progress);
 }
 
 .star {

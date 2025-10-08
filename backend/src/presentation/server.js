@@ -11,12 +11,12 @@ const authRoutes = require('./routes/auth.routes');
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Usar las rutas
 app.use('/api/incidencias', incidenciasRoutes);
 app.use('/api/auth', authRoutes);
 
-// Conectar a la DB y luego iniciar el servidor
 (async () => {
   try {
     await connectDB();

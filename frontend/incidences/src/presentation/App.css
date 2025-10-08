@@ -2,12 +2,15 @@
 
 :root {
   --font-family: 'Poppins', sans-serif;
-  --color-bg: #1a1a2e;
-  --color-primary: #b31f1f;
-  --color-secondary: #f0c400;
-  --color-tertiary: #1df500;
+  --color-overmouse:  #fdeda6; 
+  --color-bg: #242424;
+  --color-status-created: #b31f1f;
+  --color-status-in-progress: #f0c400;
+  --color-status-resolved: #1df500;
+  --color-status-pending: #4682B4;
   --color-text: #ffffff;
-  --color-card-bg: rgba(255, 255, 255, 0.05);
+  --color-text-button: #000000;
+  --card-bg: rgba(255, 255, 255, 0.05);
   --border-radius: 15px;
   --backdrop-blur: 10px;
 }
@@ -47,7 +50,7 @@ body {
   font-weight: 700;
   color: var(--color-text);
   text-shadow: 0 0 10px rgba(233, 69, 96, 0.5);
-  color: var(--color-secondary);
+  color: var(--color-status-in-progress);
   text-shadow: 0 0 10px rgba(240, 196, 0, 0.5);
   cursor: pointer;
   transition: color 0.3s ease;
@@ -56,7 +59,7 @@ body {
 }
 
 .App h1.main-title a:hover {
-  color: var(--color-secondary);
+  color: var(--color-status-in-progress);
   text-shadow: 0 0 15px rgba(240, 196, 0, 0.8);
 }
 
@@ -92,17 +95,7 @@ body {
 
 
 
-:root {
-  --color-bg: #1e1e21;
-  --color-primary: #b31f1f;
-  --color-secondary: #f0c400;
-  --color-tertiary: #1df500;
-  --color-quaternary: #00a8f3; /* Azul para Siguientes */
-  --color-text: #ffffff;
-  --color-card-bg: rgba(255, 255, 255, 0.05);
-  --border-radius: 15px;
-  --backdrop-blur: 10px;
-}
+
 
 .focused-view {
   width: 100%;
@@ -125,7 +118,7 @@ body {
   left: 2rem;
   font-size: 1.1rem;
   color: var(--color-bg);
-  background-color: var(--color-secondary);
+  background-color: var(--color-status-in-progress);
   padding: 0.6rem 1.2rem;
   border-radius: 8px;
   text-decoration: none;
@@ -140,7 +133,7 @@ body {
 
 .back-link:hover {
   background-color: var(--color-text);
-  color: var(--color-secondary);
+  color: var(--color-status-in-progress);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
   transform: translateY(-2px);
 }
@@ -160,7 +153,7 @@ body {
   left: 2rem;
   font-size: 1.1rem;
   color: var(--color-bg);
-  background-color: var(--color-secondary);
+  background-color: var(--color-status-in-progress);
   padding: 0.6rem 1.2rem;
   border-radius: 8px;
   text-decoration: none;
@@ -175,7 +168,7 @@ body {
 
 .back-to-category-link:hover {
   background-color: var(--color-text);
-  color: var(--color-secondary);
+  color: var(--color-status-in-progress);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
   transform: translateY(-2px);
 }

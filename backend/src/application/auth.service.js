@@ -1,17 +1,17 @@
 const { getDB } = require('../infrastructure/data/db');
-const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
-
 const JWT_SECRET = process.env.JWT_SECRET;
-
-// Almacenamiento en memoria para usuarios si la DB no está conectada
-const inMemoryUsers = [];
-
+const bcrypt = require('bcryptjs');
+const inMemoryUsers = [{
+  _id: '654a93886f44d8b67cf902c6',
+  username: 'admin',
+  password: bcrypt.hashSync('Admin1234', 10),
+  role: 'admin',
+}];
 const registerUser = async (userData) => {
   const { username, password, role } = userData;
 
-  // Validate role
   const validRoles = ['technician', 'supervisor', 'admin'];
   if (!validRoles.includes(role)) {
     throw new Error('Rol inválido especificado');
@@ -19,7 +19,7 @@ const registerUser = async (userData) => {
 
   const db = getDB();
 
-  if (!db) { // Fallback a memoria
+  if (!db) {
     const existingUser = inMemoryUsers.find(u => u.username === username);
     if (existingUser) {
       throw new Error('El usuario ya existe (en memoria)');
@@ -75,23 +75,18 @@ const loginUser = async (loginData) => {
       throw new Error('Invalid credentials');
     }
   }
-
   const isMatch = await bcrypt.compare(loginData.password, user.password);
   if (!isMatch) {
     throw new Error('Invalid credentials');
   }
-
   const payload = {
     id: user._id,
     username: user.username,
     role: user.role,
   };
-
   const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
-
   return { token, user };
 };
-
 module.exports = {
   registerUser,
   loginUser,

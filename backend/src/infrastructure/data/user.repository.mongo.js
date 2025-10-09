@@ -1,8 +1,8 @@
 const { getDB } = require('./db');
 
-const findUserByUsername = async (username) => {
+const findUserByEmail = async (email) => {
   const db = getDB();
-  return await db.collection('users').findOne({ username });
+  return await db.collection('users').findOne({ email });
 };
 
 const createUser = async (userToInsert) => {
@@ -17,7 +17,7 @@ const findAllUsers = async () => {
 };
 
 module.exports = {
-  findUserByUsername,
+  findUserByEmail,
   createUser,
   findAllUsers,
 };

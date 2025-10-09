@@ -1,0 +1,94 @@
+/* src/presentation/styles/_base.css */
+
+/* Variables CSS */
+:root {
+  /* Paleta de colores */
+  --color-primary: #3498db;
+  --color-primary-dark: #2980b9;
+  --color-secondary: #f39c12;
+  --color-secondary-dark: #e67e22;
+  --color-danger: #e74c3c;
+  --color-danger-dark: #c0392b;
+  --color-success: #2ecc71;
+  --color-success-dark: #27ae60;
+  --color-light-gray: #f2f2f2;
+  --color-medium-gray: #bdc3c7;
+  --color-dark-gray: #34495e;
+  --color-text-light: #fefefe;
+  --color-text-dark: #333333;
+  --color-border: #ddd;
+
+  /* Colores de estado */
+  --color-status-created: #3498db;
+  --color-status-pending: #f39c12;
+  --color-status-in-progress: #8e44ad;
+  --color-status-resolved: #2ecc71;
+  --color-status-closed: #7f8c8d;
+}
+
+/* Estilos de botones genéricos */
+.button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  white-space: nowrap;
+}
+
+.button:hover {
+  opacity: 0.9;
+}
+
+.button-primary {
+  background-color: var(--color-primary);
+  color: var(--color-text-light);
+}
+
+.button-primary:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.button-secondary {
+  background-color: var(--color-secondary);
+  color: var(--color-text-light);
+}
+
+.button-secondary:hover {
+  background-color: var(--color-secondary-dark);
+}
+
+.button-danger {
+  background-color: var(--color-danger);
+  color: var(--color-text-light);
+}
+
+.button-danger:hover {
+  background-color: var(--color-danger-dark);
+}
+
+/* Estilos de formularios genéricos */
+.form-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
+  font-size: 16px;
+  width: 100%;
+  box-sizing: border-box; 
+}
+

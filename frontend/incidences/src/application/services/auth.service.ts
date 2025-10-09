@@ -1,6 +1,6 @@
 
 interface LoginCredentials {
-  username?: string;
+  email?: string;
   password?: string;
 }
 
@@ -14,12 +14,12 @@ const USE_MOCK_LOGIN = import.meta.env.VITE_USE_MOCK_LOGIN === 'true';
 const mockLogin = async (credentials: LoginCredentials) => {
   // Puedes personalizar los usuarios simulados aquí
   const users = [
-    { username: 'admin', password: 'Admin1234', role: 'admin' },
-    { username: 'supervisor', password: 'Super123', role: 'supervisor' },
-    { username: 'tech', password: 'Tech12345', role: 'technician' },
+    { username: 'admin', email: 'admin@example.com', password: 'Admin1234', role: 'admin' },
+    { username: 'supervisor', email: 'supervisor@example.com', password: 'Super123', role: 'supervisor' },
+    { username: 'operador', email: 'operador@example.com', password: 'Operador12345', role: 'operador' },
   ];
   const user = users.find(
-    u => u.username === credentials.username && u.password === credentials.password
+    u => u.email === credentials.email && u.password === credentials.password
   );
   if (!user) {
     throw new Error('Credenciales inválidas (simulado)');
@@ -30,6 +30,7 @@ const mockLogin = async (credentials: LoginCredentials) => {
     user: {
       id: 'mock-id',
       username: user.username,
+      email: user.email,
       role: user.role,
     },
   };

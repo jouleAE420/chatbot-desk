@@ -39,13 +39,35 @@ const HomePage: React.FC<Props> = ({
   , [incidencias]);
 
   const globalColumnState = columnStates.all;
-  let processedIncidencias = [...incidencias];
-
-  // Global filters and sort logic...
 
   const columns = useMemo(() => {
-    const processedIncidencias = [...incidencias];
-    // Global filters and sort logic could be applied here if needed
+    let processedIncidencias = [...incidencias];
+    const filters = globalColumnState.currentFilterValues;
+
+    // Global filter logic
+    if (Object.keys(filters).length > 0) {
+        processedIncidencias = processedIncidencias.filter(inc => {
+            return (
+                (!filters.parkingId || inc.parkingId === filters.parkingId) &&
+                (!filters.ticketType || inc.ticketType === filters.ticketType) &&
+                (!filters.clientName || inc.clientName.toLowerCase().includes(filters.clientName.toLowerCase())) &&
+                (!filters.assignedTo || inc.assignedTo === filters.assignedTo)
+            );
+        });
+    }
+
+    // Global sort logic
+    if (globalColumnState.sortOrder) {
+      processedIncidencias.sort((a, b) => {
+        const dateA = new Date(a.createdAt).getTime();
+        const dateB = new Date(b.createdAt).getTime();
+        if (globalColumnState.sortOrder === 'asc') {
+          return dateA - dateB;
+        } else {
+          return dateB - dateA;
+        }
+      });
+    }
     
     return {
       [StatusType.created]: {
@@ -68,7 +90,7 @@ const HomePage: React.FC<Props> = ({
           .slice(0, 4),
       },
     };
-  }, [incidencias, user]);
+  }, [incidencias, user, globalColumnState.sortOrder, globalColumnState.currentFilterValues]);
 
   const columnOrder: StatusType[] = [StatusType.created, StatusType.pending, StatusType.in_progress, StatusType.resolved];
 
@@ -86,7 +108,7 @@ const HomePage: React.FC<Props> = ({
 
     if (isAssigningFromCreated) {
       setPendingAction({
-        message: `¿Confirmas que quieres asignarte esta incidencia y moverla a "${newStatus}"?`,
+        message: `¿Confirmas que quieres asignarte esta incidencia y moverla a \"${newStatus}\"?`,
         action: () => onUpdateStatus(id, newStatus, user?.username)
       });
     } else {
@@ -103,6 +125,11 @@ const HomePage: React.FC<Props> = ({
     const incidenceId = Number(draggableId);
     const movedIncidence = incidencias.find(inc => inc.id === incidenceId);
     if (!movedIncidence) return;
+
+    // Prevent non-admins from moving resolved incidences
+    if (movedIncidence.status === StatusType.resolved && user?.role !== 'admin') {
+      return;
+    }
 
     const newStatus = destination.droppableId as StatusType;
     
@@ -142,19 +169,52 @@ const HomePage: React.FC<Props> = ({
             let filteredIncidencias = col.incidencias;
 
             // Individual column filtering and sorting logic...
+            const columnFilters = currentColumnState.currentFilterValues;
+            if (Object.keys(columnFilters).length > 0) {
+                filteredIncidencias = filteredIncidencias.filter(inc => {
+                    return (
+                        (!columnFilters.parkingId || inc.parkingId === columnFilters.parkingId) &&
+                        (!columnFilters.ticketType || inc.ticketType === columnFilters.ticketType) &&
+                        (!columnFilters.clientName || inc.clientName.toLowerCase().includes(columnFilters.clientName.toLowerCase())) &&
+                        (!columnFilters.assignedTo || inc.assignedTo === columnFilters.assignedTo)
+                    );
+                });
+            }
+
+            if (currentColumnState.sortOrder) {
+              filteredIncidencias.sort((a, b) => {
+                if (currentColumnState.sortOrder === 'asc') {
+                  return a.createdAt - b.createdAt;
+                } else {
+                  return b.createdAt - a.createdAt;
+                }
+              });
+            }
 
             return (
               <React.Fragment key={key}>
+                {currentColumnState.isFilterFormVisible && (
+                  <FilterForm
+                    isVisible={currentColumnState.isFilterFormVisible}
+                    onClose={() => onCloseFilterForm(key as StatusType)}
+                    onApplyFilter={(filters) => onApplyFilter(key as StatusType, filters)}
+                    currentFilterValues={currentColumnState.currentFilterValues}
+                    incidencias={col.incidencias}
+                    assignees={assignees}
+                  />
+                )}
+                
+                
                 <IncidenceColumn
                   droppableId={key}
                   title={<Link to={`/${key.toLowerCase().replace(/_/g, '-')}`}>{col.title}</Link>}
                   toolbar={
                     <CategoryToolbar
-                      onFilterButtonClick={() => onFilterButtonClick(key as StatusType | 'all')}
-                      onSortChange={(order) => onSortChange(key as StatusType | 'all', order)}
+                      onFilterButtonClick={() => onFilterButtonClick(key as StatusType)}
+                      onSortChange={(order) => onSortChange(key as StatusType, order)}
                       currentSortOrder={currentColumnState.sortOrder}
-                      areFiltersApplied={Object.keys(currentColumnState.currentFilterValues).length > 0} 
-                      onClearFilters={() => onApplyFilter(key as StatusType | 'all', {})}
+                      areFiltersApplied={Object.keys(currentColumnState.currentFilterValues).length > 0}
+                      onClearFilters={() => onApplyFilter(key as StatusType, {})}
                     />
                   }
                   incidencias={filteredIncidencias}
@@ -164,10 +224,9 @@ const HomePage: React.FC<Props> = ({
                   onStatisticsClick={
                     onStatisticsClick && key !== StatusType.pending
                       ? () => onStatisticsClick(key as StatusType)
-                      : undefined
+                                            : undefined
                   }
                 />
-                {/* ... */}
               </React.Fragment>
             );
           })}

@@ -5,7 +5,7 @@ import { timeAgo } from '../../utils/date';
 import StarRating from '../StarRating';
 import useWindowSize from '../../utils/useWindowSize';
 import './IncidenceCard.css';
-import { IconUserPlus, IconUser } from '@tabler/icons-react';
+import { IconUser } from '@tabler/icons-react';
 import StatusActionButtons from '../StatusActionButtons/StatusActionButtons';
 import { createPortal } from 'react-dom';
 import AssignModal from '../AssignModal/AssignModal';
@@ -77,17 +77,15 @@ const IncidenceCardBase: React.FC<Props> = ({ incidencia, isDragging = false, on
               }
             }}
           >
-            {incidencia.assignedTo ? (
+            {incidencia.assignedTo && (
               <IconUser stroke={2} size={24} className="assignee-icon" title={`Asignado a: ${incidencia.assignedTo}`} />
-            ) : (
-              <IconUserPlus stroke={2} size={24} className="assignee-icon" title="No asignado" />
             )}
           </div>
         </div>
         <p className="time-ago">Hace {timeAgo(incidencia.createdAt)}</p>
       </div>
 
-      {/* Assignee Info Modal */}
+      
       {isAssigneeInfoModalOpen && createPortal(
         <div className="assignee-info-modal-overlay" onClick={() => setIsAssigneeInfoModalOpen(false)}>
           <div className="assignee-info-modal-content" onClick={(e) => e.stopPropagation()}>

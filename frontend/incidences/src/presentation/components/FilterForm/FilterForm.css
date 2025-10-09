@@ -13,14 +13,7 @@
   padding: 2rem 0; /* Añadir espacio arriba y abajo */
 }
 
-:root {
-  --filter-bg: #0f1116; 
-  --filter-input-bg: #0b0c10;
-  --filter-input-border: #1f2126; 
-  --filter-apply-bg: #f3ca25; 
-  --filter-apply-hover: #fdeda6; 
-  --filter-title-color: #f3ca25; 
-}
+
 
 .filter-form-container {
   background-color: var(--filter-bg);

@@ -6,13 +6,14 @@ const bcrypt = require('bcryptjs');
 const inMemoryUsers = [{
   _id: '654a93886f44d8b67cf902c6',
   username: 'admin',
+  email: 'admin@example.com',
   password: bcrypt.hashSync('Admin1234', 10),
   role: 'admin',
 }];
 const registerUser = async (userData) => {
-  const { username, password, role } = userData;
+  const { username, email, password, role } = userData;
 
-  const validRoles = ['technician', 'supervisor', 'admin'];
+  const validRoles = ['operador', 'supervisor', 'admin'];
   if (!validRoles.includes(role)) {
     throw new Error('Rol inválido especificado');
   }
@@ -20,7 +21,7 @@ const registerUser = async (userData) => {
   const db = getDB();
 
   if (!db) {
-    const existingUser = inMemoryUsers.find(u => u.username === username);
+    const existingUser = inMemoryUsers.find(u => u.email === email);
     if (existingUser) {
       throw new Error('El usuario ya existe (en memoria)');
     }
@@ -31,6 +32,7 @@ const registerUser = async (userData) => {
     const newUser = {
       _id: inMemoryUsers.length + 1, // Simular un ID
       username: username,
+      email: email,
       password: hashedPassword,
       role: role,
     };
@@ -41,7 +43,7 @@ const registerUser = async (userData) => {
   // Lógica existente de MongoDB
   const usersCollection = db.collection('users');
 
-  const existingUser = await usersCollection.findOne({ username: username });
+  const existingUser = await usersCollection.findOne({ email: email });
   if (existingUser) {
     throw new Error('El usuario ya existe');
   }
@@ -51,6 +53,7 @@ const registerUser = async (userData) => {
 
   const newUser = {
     username: username,
+    email: email,
     password: hashedPassword,
     role: role,
   };
@@ -64,13 +67,13 @@ const loginUser = async (loginData) => {
 
   let user;
   if (!db) { // Fallback a memoria
-    user = inMemoryUsers.find(u => u.username === loginData.username);
+    user = inMemoryUsers.find(u => u.email === loginData.email);
     if (!user) {
       throw new Error('Invalid credentials (en memoria)');
     }
   } else {
     const usersCollection = db.collection('users');
-    user = await usersCollection.findOne({ username: loginData.username });
+    user = await usersCollection.findOne({ email: loginData.email });
     if (!user) {
       throw new Error('Invalid credentials');
     }
@@ -82,6 +85,7 @@ const loginUser = async (loginData) => {
   const payload = {
     id: user._id,
     username: user.username,
+    email: user.email,
     role: user.role,
   };
   const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });

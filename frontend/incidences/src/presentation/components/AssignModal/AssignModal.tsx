@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { IconUserCog, IconUserX } from '@tabler/icons-react'; // Import Tabler Icons
 import './AssignModal.css';
 
@@ -22,10 +23,19 @@ const AssignModal: React.FC<AssignModalProps> = ({ isOpen, onClose, mode, curren
       setAssignedToName('');
     }
   }, [isOpen, mode, currentAssignee]);
-//si el modal no esta abierto, no renderizamos nada
+  //si el modal no esta abierto, no renderizamos nada
   if (!isOpen) {
     return null;
   }
+
+  // Lock background scroll when modal is open
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, []);
 //esta const gestiona las acciones de confirmacion y cierre del modal
 //las cuales dependen del modo en el que se encuentre el modal
   const handleConfirmAction = (action: 'add' | 'edit' | 'delete') => {
@@ -118,12 +128,13 @@ const AssignModal: React.FC<AssignModalProps> = ({ isOpen, onClose, mode, curren
   };
   
 //retornamos el JSX del modal
-  return (
+  return createPortal(
     <div className="assign-modal-overlay" onClick={handleCancel}>
       <div className="assign-modal-content" onClick={(e) => e.stopPropagation()}>
         {renderContent()}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

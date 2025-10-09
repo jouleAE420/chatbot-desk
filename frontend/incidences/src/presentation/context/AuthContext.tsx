@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 interface User {
   id: string;
   username: string;
+  email: string;
   role: string;
 }
 
@@ -49,7 +50,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         case 'admin':
           navigate('/dashboard/general');
           break;
-        case 'technician':
+        case 'operador':
         default:
           navigate('/');
           break;

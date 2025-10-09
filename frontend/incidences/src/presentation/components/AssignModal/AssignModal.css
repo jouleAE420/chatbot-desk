@@ -20,8 +20,12 @@
   padding: 25px;
   border-radius: 8px;
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-  width: 90%;
-  max-width: 400px;
+  box-sizing: border-box; /* ensure padding is included in width/height calculations */
+  width: min(92%, 420px);
+  max-width: 420px;
+  min-width: 280px;
+  max-height: 80vh; /* prevent growing beyond viewport */
+  overflow-y: auto; /* allow internal scrolling if content is tall */
   text-align: center;
   animation: slide-down 0.3s ease-out; /* from filter-form-container */
 }
@@ -55,7 +59,7 @@
   margin-bottom: 20px;
   border-radius: 8px;
   border: 1px solid #4a4a5a; /* from form-group input */
-  background-color: #1a1a2e; /* from form-group input */
+  background-color: var(--filter-input-bg);
   color: var(--color-text); /* from form-group input */
   font-size: 1em;
 }
@@ -98,7 +102,9 @@
 }
 
 .assign-modal-button.assign:disabled {
-  background-color: #cccccc;
+  background-color: #cccccc !important;
+  border: none;
+  opacity: 0.8;
   cursor: not-allowed;
 }
 

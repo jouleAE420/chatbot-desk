@@ -6,16 +6,19 @@ const seedDatabase = async (db) => {
   const usersToSeed = [
     {
       username: 'admin',
+      email: 'admin@example.com',
       password: 'Admin1234',
       role: 'admin',
     },
     {
-      username: 'tech',
-      password: 'Tech12345',
-      role: 'technician',
+      username: 'operador',
+      email: 'operador@example.com',
+      password: 'Operador12345',
+      role: 'operador',
     },
     {
       username: 'supervisor',
+      email: 'supervisor@example.com',
       password: 'Super123',
       role: 'supervisor',
     }
@@ -29,6 +32,7 @@ const seedDatabase = async (db) => {
 
       await usersCollection.insertOne({
         username: user.username,
+        email: user.email,
         password: hashedPassword,
         role: user.role,
         createdAt: new Date(),

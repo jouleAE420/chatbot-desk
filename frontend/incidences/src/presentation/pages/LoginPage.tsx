@@ -4,7 +4,7 @@ import './LoginPage.css';
 import { useAuth } from '../context/AuthContext';
 
 const LoginPage: React.FC = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const { login } = useAuth();
@@ -13,7 +13,7 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     setError('');
     try {
-      await login({ username, password });
+      await login({ email, password });
       // The redirect is handled inside the login function in the context
     } catch (err: any) {
       setError(err.message || 'Failed to login');
@@ -27,12 +27,12 @@ const LoginPage: React.FC = () => {
         <form onSubmit={handleLogin} className="login-form">
           {error && <p className="login-error">{error}</p>}
           <div className="form-group">
-            <label htmlFor="username">Usuario</label>
+            <label htmlFor="email">Correo Electrónico</label>
             <input
-              type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>

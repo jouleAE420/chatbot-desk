@@ -1,77 +1,48 @@
-const bcrypt = require('bcryptjs');
 
-// In-memory user store
-let users = [];
-let nextUserId = 1;
-
-const seedUsers = async () => {
-    if (users.length > 0) return;
-
-    const usersToSeed = [
-        {
-            username: 'admin',
-            password: 'admin',
-            role: 'admin',
-        },
-        {
-            username: 'tech',
-            password: 'tech',
-            role: 'technician',
-        },
-        {
-            username: 'supervisor',
-            password: 'supervisor',
-            role: 'supervisor',
-        }
+class UserRepositoryMock {
+  constructor() {
+    this.users = [
+      {
+        id: 1,
+        name: "Admin User",
+        // Asegúrate de que tus usuarios de prueba tengan un email
+        email: "admin@example.com", 
+        username: "admin",
+        password: "password123", // En un proyecto real, la contraseña estaría encriptada
+        role: "admin",
+      },
+      {
+        id: 2,
+        name: "Supervisor User",
+        email: "supervisor@example.com",
+        username: "supervisor",
+        password: "password123",
+        role: "supervisor",
+      },
+      {
+        id: 3,
+        name: "Normal User",
+        email: "user@example.com",
+        username: "user",
+        password: "password123",
+        role: "user",
+      },
     ];
+  }
 
-    for (const user of usersToSeed) {
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(user.password, salt);
+  async getAll() {
+    return this.users;
+  }
 
-        users.push({
-            _id: nextUserId++,
-            username: user.username,
-            password: hashedPassword,
-            role: user.role,
-        });
-    }
-};
+  async findByEmail(email) {
+    const user = this.users.find((user) => user.email === email);
+    return user;
+  }
 
-// Seed the users when the module is loaded
-seedUsers();
+  async findById(id) {
+    const user = this.users.find((user) => user.id === id);
+    return user;
+  }
+}
 
-const findUserByUsername = async (username) => {
-  const user = users.find(u => u.username === username);
-  return Promise.resolve(user); // Return a promise to mimic async DB call
-};
-
-const createUser = async (userData) => {
-  const { username, password, role } = userData;
-
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
-
-  const newUser = {
-    _id: nextUserId++,
-    username,
-    password: hashedPassword,
-    role,
-  };
-
-  users.push(newUser);
-  // To mimic insertOne result
-  return Promise.resolve({ acknowledged: true, insertedId: newUser._id });
-};
-
-const findAllUsers = async () => {
-  // Return all users without their passwords
-  const usersWithoutPasswords = users.map(({ password, ...rest }) => rest);
-  return Promise.resolve(usersWithoutPasswords);
-};
-
-module.exports = {
-  findUserByUsername,
-  createUser,
-  findAllUsers,
-};
+export default new UserRepositoryMock();

@@ -107,10 +107,22 @@ const saveMany = async (incidencias) => {
     persistIncidents();
     return { insertedCount: newIncidencias.length };
 };
-
+const updateRating = async (id, newRating, newComment) => {
+  const incidencia = mockIncidencias.find(inc => inc.id === parseInt(id, 10));
+  if (!incidencia) {
+    return null;
+  }
+  incidencia.rate = newRating;
+  incidencia.comment = newComment || ''; 
+  
+  // Persistir los cambios en el archivo JSON
+  persistIncidents();
+  return incidencia;
+};
 module.exports = {
   getAll,
   updateStatus,
   save,
   saveMany,
+  updateRating,
 };

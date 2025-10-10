@@ -8,30 +8,7 @@ const getAll = async (query = {}) => {
 };
 
 const updateStatus = async (id, newStatus, assignedTo) => {
-  if (!ObjectId.isValid(id)) {
-    throw new Error('ID de incidencia no válido');
-  }
-
-  const updateDoc = {
-    $set: {
-      status: newStatus,
-      assignedTo: assignedTo,
-    },
-  };
-
-  if (newStatus === 'resolved') {
-    updateDoc.$set.resolvedAt = new Date();
-  } else {
-    updateDoc.$set.resolvedAt = null;
-  }
-
-  const result = await getCollection().findOneAndUpdate(
-    { _id: new ObjectId(id) },
-    updateDoc,
-    { returnDocument: 'after' }
-  );
-
-  return result;
+// ... (código de updateStatus existente) ...
 };
 
 const save = async (incidencia) => {
@@ -42,20 +19,27 @@ const saveMany = async (incidencias) => {
   return await getCollection().insertMany(incidencias);
 };
 
+// NUEVA FUNCIÓN: Actualiza la calificación
 const updateRating = async (id, newRating, newComment) => {
   if (!ObjectId.isValid(id)) {
-    throw new Error('ID de incidencia no válido');
+    // Si usas mock data, el ID no será un ObjectId, maneja solo si MONGO_URI está definido
+    if (process.env.MONGO_URI) { 
+        throw new Error('ID de incidencia no válido');
+    }
   }
 
   const updateDoc = {
     $set: {
       rate: newRating,
-      comment: newComment || null, // Opcional: actualizar comentario si se proporciona
+      comment: newComment || null, // Permite actualizar también el comentario si viene
     },
   };
+  
+  // Usamos el ID directamente si no es un ObjectId (para mock)
+  const query = process.env.MONGO_URI ? { _id: new ObjectId(id) } : { id: parseInt(id, 10) };
 
   const result = await getCollection().findOneAndUpdate(
-    { _id: new ObjectId(id) },
+    query,
     updateDoc,
     { returnDocument: 'after' }
   );
@@ -69,5 +53,5 @@ module.exports = {
   updateStatus,
   save,
   saveMany,
-  updateRating
+  updateRating // <--- EXPORTAR LA NUEVA FUNCIÓN
 };

@@ -52,9 +52,30 @@ const saveOfflineIncidencias = async (req, res) => {
   }
 };
 
+const updateIncidenciaRating = async (req, res) => {
+  try {
+    const { id } = req.params;
+    // Asumimos que el chatbot envía el rating y un posible comentario
+    const { rating, comment } = req.body; 
+
+    // Llamamos a la nueva función del servicio
+    const updatedIncidencia = await service.updateIncidenciaRating(id, rating, comment); 
+
+    if (!updatedIncidencia) {
+      return res.status(404).json({ message: 'Incidencia no encontrada' });
+    }
+
+    // Respuesta que el chatbot/la plataforma de calificación debe recibir
+    res.status(200).json({ message: 'Calificación registrada exitosamente' }); 
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getIncidencias,
   updateIncidenciaStatus,
   saveIncidencia,
   saveOfflineIncidencias,
+  updateIncidenciaRating,
 };

@@ -42,9 +42,32 @@ const saveMany = async (incidencias) => {
   return await getCollection().insertMany(incidencias);
 };
 
+const updateRating = async (id, newRating, newComment) => {
+  if (!ObjectId.isValid(id)) {
+    throw new Error('ID de incidencia no válido');
+  }
+
+  const updateDoc = {
+    $set: {
+      rate: newRating,
+      comment: newComment || null, // Opcional: actualizar comentario si se proporciona
+    },
+  };
+
+  const result = await getCollection().findOneAndUpdate(
+    { _id: new ObjectId(id) },
+    updateDoc,
+    { returnDocument: 'after' }
+  );
+
+  return result;
+};
+
+
 module.exports = {
   getAll,
   updateStatus,
   save,
   saveMany,
+  updateRating
 };

@@ -17,12 +17,12 @@ export interface TicketOptions  {
   id: number;
   phoneOrigin: string;
   clientName: string;
-  rate: number;
+  rate: number|null;
   comment: string;
   ticketType: TicketType;
   parkingId: string;
   createdAt: number;
   status: StatusType;
-  assignedTo?: string; // Add this line
-  resolvedAt?: number | null; // New field
+  assignedTo?: string; 
+  resolvedAt?: number | null; 
 }

@@ -30,10 +30,19 @@ const saveOfflineIncidencias = async (incidencias) => {
   }));
   return await repository.saveMany(incidenciasConFecha);
 };
+const updateIncidenciaRating = async (id, rating, comment) => {
+  if (!rating) {
+    throw new Error('La calificación (rating) es requerida');
+  }
+  // En un entorno de producción, aquí verificaríamos que la calificación esté entre 1 y 5.
+  // También deberíamos asegurar que la incidencia ya esté en estado 'RESOLVED'.
+  return await repository.updateRating(id, rating, comment);
+};
 
 module.exports = {
   getIncidencias,
   updateIncidenciaStatus,
   saveIncidencia,
   saveOfflineIncidencias,
+  updateIncidenciaRating, 
 };

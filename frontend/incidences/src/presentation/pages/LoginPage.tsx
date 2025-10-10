@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { IconMail, IconLock } from '@tabler/icons-react';
+
 import './LoginPage.css';
 import { useAuth } from '../context/AuthContext';
 
@@ -20,14 +22,24 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  return (
+    return (
     <div className="login-page-container">
+      <div className="login-branding-container">
+        <img src="/accesblanco.png" alt="B2Park Logo" className="login-logo"/>
+        <p className="login-mission-statement">
+          "Brindar siempre un servicio de calidad, enfocada a proporcionar atención de primer nivel y excelencia, teniendo como objetivo, ser rentables, productivos y que el cliente sea para nosotros lo principal y lo único"
+        </p>
+      </div>
       <div className="login-form-container">
-        <h1 className="login-title"><img src="/accesblanco.png" alt="B2Park Logo" className="login-logo"/><span className="login-subtitle"> Incidencias</span></h1>
+        <h1 className="login-title">Iniciar Sesión</h1>
         <form onSubmit={handleLogin} className="login-form">
-          {error && <p className="login-error">{error}</p>}
+         
+{error && <p className="login-error">{error}</p>}
           <div className="form-group">
-            <label htmlFor="email">Correo Electrónico</label>
+            <label htmlFor="email">
+    <IconMail stroke={2} size={20} />
+    Correo Electrónico
+  </label>
             <input
               type="email"
               id="email"
@@ -37,8 +49,11 @@ const LoginPage: React.FC = () => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="password">Contraseña</label>
-            <input
+<label htmlFor="password">
+    <IconLock stroke={2} size={20} />
+    Contraseña
+  </label>
+              <input
               type="password"
               id="password"
               value={password}
@@ -54,6 +69,7 @@ const LoginPage: React.FC = () => {
       </div>
     </div>
   );
+
 };
 
 export default LoginPage;

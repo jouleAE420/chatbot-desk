@@ -5,11 +5,17 @@
   text-align: center; /* Center the content of h1 */
 }
 
-.login-subtitle {
-  display: block; /* Make it a block element */
-  margin-top: 10px; /* Increased space between logo and text */
-  color: var(--color-text); /* Or white, depending on preference */
-  font-size: 4rem; /* Increased font size */
+.login-mission-statement {
+  display: block;
+  margin-top: 1rem;
+  color: var(--color-text);
+  font-size: 1.2rem;
+  /*font-family: 'Merriweather';*/
+  font-weight: 300;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.5;
 }
 
 .login-form .form-group {
@@ -18,7 +24,9 @@
 }
 
 .login-form label {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   margin-bottom: 0.5rem;
   color: #a9a9b3;
 }
@@ -59,4 +67,33 @@
   height: 100px; /* Increased height */
   display: block;
   margin: 0 auto; /* Center the block element */
+}
+.login-page-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.login-branding-container {
+  flex: 1;
+  max-width: 600px;
+  text-align: center;
+}
+
+.login-form-container {
+  flex: 1;
+  max-width: 400px;
+  padding: 2rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+/* Agregar una media query para pantallas más pequeñas */
+@media (max-width: 768px) {
+  .login-page-container {
+    flex-direction: column;
+  }
 }

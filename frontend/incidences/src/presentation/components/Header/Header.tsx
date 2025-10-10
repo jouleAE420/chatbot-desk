@@ -10,6 +10,9 @@ import {
 } from '@tabler/icons-react';
 import ViewSwitcher from '../ViewSwitcher/ViewSwitcher';
 
+
+import { UserProfileDropdown }   from '../UserProfileDropdown/UserProfileDropdown.tsx';
+
 const statusKeyMap: { [key: string]: StatusType } = {
   created: StatusType.created,
   pending: StatusType.pending,
@@ -71,10 +74,8 @@ const Header: React.FC<HeaderProps> = ({
       </div>
       <div className="header-right">
         <div className="user-session">
-          <span className="username">Hola, {user?.username}</span>
-          <button onClick={logout} className="logout-button" title="Cerrar Sesión">
-            <IconLogout stroke={2} />
-          </button>
+          <UserProfileDropdown />
+      
         </div>
       </div>
     </header>

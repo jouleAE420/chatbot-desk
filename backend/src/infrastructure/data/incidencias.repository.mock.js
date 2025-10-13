@@ -28,13 +28,13 @@ try {
   const ticketTypes = ['COMPLAINT', 'SUGGESTION', 'OTHER'];
   const statuses = ['CREATED', 'PENDING', 'IN_PROGRESS', 'RESOLVED'];
   const assignees = ['tech1', 'tech2', null];
-  mockIncidencias = Array.from({ length: 30 }, (_, i) => ({
+mockIncidencias = Array.from({ length: 30 }, (_, i) => ({
     id: i + 1,
     title: `Incidencia de prueba ${i + 1}`,
     description: `Descripción de la incidencia ${i + 1}`,
     phoneOrigin: `555-123-${1000 + i}`,
     clientName: `Cliente ${i + 1}`,
-    rate: Math.floor(Math.random() * 5) + 1,
+    rate: null,
     comment: `Comentario de prueba ${i + 1}`,
     ticketType: ticketTypes[Math.floor(Math.random() * ticketTypes.length)],
     parkingId: locations[Math.floor(Math.random() * locations.length)],
@@ -48,6 +48,7 @@ try {
     if (inc.status === 'RESOLVED') {
       if (!inc.assignedTo) inc.assignedTo = 'tech1';
       inc.resolvedAt = new Date(inc.createdAt + Math.random() * 1000 * 60 * 60 * 24).getTime();
+      inc.rate = Math.floor(Math.random() * 5) + 1;
     } else {
       inc.resolvedAt = null;
     }
@@ -115,10 +116,11 @@ const updateRating = async (id, newRating, newComment) => {
   incidencia.rate = newRating;
   incidencia.comment = newComment || ''; 
   
-  // Persistir los cambios en el archivo JSON
   persistIncidents();
   return incidencia;
 };
+
+
 module.exports = {
   getAll,
   updateStatus,

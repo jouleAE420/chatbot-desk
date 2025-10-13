@@ -88,6 +88,9 @@
   gap: 1rem;
 }
 
+
+
+
 .shortcut-button {
   display: flex;
   flex-direction: column;
@@ -258,4 +261,60 @@
   .general-dashboard .kpi-container {
     flex-direction: column;
   }
+}
+
+.chart-card {
+  background: var(--color-card-bg);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.chart-card h3 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.2rem;
+  color: #a9a9b3;
+}
+.kpi-card.kpi-good {
+  background-color: #5af45a; /* Verde claro */
+  color: #006600;
+}
+
+.kpi-card.kpi-warning {
+  background-color: #ffe254; /* Naranja claro */
+  color: #cc8400;
+}
+
+.kpi-card.kpi-danger {
+  background-color: #ff6767; /* Rojo claro */
+  color: #cc0000;
+}
+
+/* Estilos para el indicador de tendencia */
+.kpi-trend {
+  display: flex;
+  align-items: center;
+  font-size: 0.85em;
+  margin-top: 5px;
+  font-weight: bold;
+}
+
+.kpi-trend-up {
+  color: #006600; /* Verde para tendencia al alza */
+}
+
+.kpi-trend-down {
+  color: #cc0000; /* Rojo para tendencia a la baja */
+}
+
+.kpi-trend-same {
+  color: #666666; /* Gris para tendencia igual */
+}
+
+.kpi-trend svg {
+  margin-right: 3px;
 }

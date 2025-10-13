@@ -11,5 +11,6 @@ router.get('/', controller.getIncidencias);
 router.put('/:id/status', controller.updateIncidenciaStatus);
 router.post('/save', controller.saveIncidencia);
 router.post('/save-offline', controller.saveOfflineIncidencias);
+router.put('/:id/rating', controller.updateIncidenciaRating); 
 
 module.exports = router;

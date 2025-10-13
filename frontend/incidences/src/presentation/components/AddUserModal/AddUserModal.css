@@ -1,0 +1,64 @@
+.add-user-form .form-group {
+  margin-bottom: 15px;
+}
+
+.add-user-form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+}
+
+.add-user-form input[type="text"],
+.add-user-form input[type="email"],
+.add-user-form input[type="password"],
+.add-user-form select {
+  width: calc(100% - 20px); /* Ajuste para padding */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+.add-user-form input:focus,
+.add-user-form select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.submit-button,
+.cancel-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.submit-button {
+  background-color: #28a745; /* Verde */
+  color: white;
+}
+
+.submit-button:hover {
+  background-color: #218838;
+}
+
+.cancel-button {
+  background-color: #dc3545; /* Rojo */
+  color: white;
+}
+
+.cancel-button:hover {
+  background-color: #c82333;
+}

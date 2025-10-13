@@ -3,15 +3,16 @@ import './StarRating.css';
 
 // Define las props que el componente espera recibir
 interface StarRatingProps {
-  rating: number;
+  rating: number | null | undefined;
 }
-//componente funcional de react
+
 const StarRating: React.FC<StarRatingProps> = ({ rating }) => {
-  //returna el JSX que define la estructura visual del componente
+  const numericRating = rating || 0;
+
   return (
     <div className="star-rating">
       {[...Array(5)].map((_, index) => {
-        const starClass = index < rating ? 'star-filled' : 'star-empty';
+        const starClass = index < numericRating ? 'star-filled' : 'star-empty';
         return <span key={index} className={`star ${starClass}`}>★</span>;
       })}
     </div>

@@ -156,3 +156,18 @@
 .assign-modal-button.cancel-view:hover {
   background-color: #5a6a6a;
 }
+.add-user-form .submit-button {
+  background-color: #28a745; /* Verde específico para agregar */
+}
+
+.add-user-form .submit-button:hover {
+  background-color: #218838;
+}
+
+.add-user-form .cancel-button {
+  background-color: #dc3545; /* Rojo específico para cancelar */
+}
+
+.add-user-form .cancel-button:hover {
+  background-color: #c82333;
+}

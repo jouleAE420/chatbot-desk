@@ -1,17 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import './Header.css';
 import CategoryToolbar from '../CategoryToolbar/CategoryToolbar';
 import type { ColumnState } from '../../App.tsx';
 import { StatusType } from '../../../domain/models/incidencia';
 import { useAuth } from '../../context/AuthContext';
-import {
-  IconLogout,
-} from '@tabler/icons-react';
+import { IconUserPlus, IconLogout, IconMenu2, IconX } from '@tabler/icons-react'; // IconMenu2 y IconX se usan aquí
 import ViewSwitcher from '../ViewSwitcher/ViewSwitcher';
-
-
 import { UserProfileDropdown }   from '../UserProfileDropdown/UserProfileDropdown.tsx';
+import AddUserModal from '../AddUserModal/AddUserModal';
 
 const statusKeyMap: { [key: string]: StatusType } = {
   created: StatusType.created,
@@ -36,6 +33,8 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   const location = useLocation();
   const { user, logout } = useAuth();
+  const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false); 
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); 
 
   const canViewDashboards = user?.role === 'admin' || user?.role === 'supervisor';
   const isDashboardView = location.pathname.startsWith('/dashboard');
@@ -51,12 +50,21 @@ const Header: React.FC<HeaderProps> = ({
     ? Object.keys(columnStates[currentStatus].currentFilterValues).length > 0
     : (columnStates.all && Object.keys(columnStates.all.currentFilterValues).length > 0);
 
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   return (
-    <header className="app-header scrolled">
+    <header className={`app-header scrolled ${isMobileMenuOpen ? 'mobile-menu-open' : ''}`}> 
       <div className="header-left">
         <img src="/accesblanco.png" alt="B2Park Logo" className="header-logo"/>
         <nav className="main-nav">
+          {/* Botón del menú móvil */}
+          <button className="mobile-menu-button" onClick={toggleMobileMenu}>
+            {isMobileMenuOpen ? <IconX /> : <IconMenu2 />}
+          </button>
           <div className="header-actions">
+             
             {canViewDashboards && (
               <ViewSwitcher isKanbanView={isKanbanView} isDashboardView={isDashboardView} />
             )}
@@ -74,10 +82,29 @@ const Header: React.FC<HeaderProps> = ({
       </div>
       <div className="header-right">
         <div className="user-session">
+          {user && user.role === 'admin' && (
+            <button className="add-user-button" title="Agregar Usuario" onClick={() => setIsAddUserModalOpen(true)}>
+              <IconUserPlus stroke={2} size={24} />
+            </button>
+          )}
           <UserProfileDropdown />
-      
+          {user && (
+            <button onClick={logout} className="logout-button" title="Cerrar Sesión">
+              <IconLogout size={24} />
+            </button>
+          )}
         </div>
       </div>
+
+      <AddUserModal
+        isOpen={isAddUserModalOpen}
+        onClose={() => setIsAddUserModalOpen(false)}
+        onAddUser={(userData) => {
+          console.log('Datos del nuevo usuario:', userData);
+          alert(`Usuario ${userData.username} agregado (simulado).`);
+          setIsAddUserModalOpen(false);
+        }}
+      />
     </header>
   );
 };

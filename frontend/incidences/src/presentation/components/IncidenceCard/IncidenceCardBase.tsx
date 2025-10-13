@@ -26,12 +26,17 @@ const IncidenceCardBase: React.FC<Props> = ({ incidencia, isDragging = false, on
 
   const isSupervisor = user?.role === 'supervisor';
 
-  const handleReleaseIncidence = () => {
+  const isResolved = incidencia.status === StatusType.resolved;
+  // isRated es true solo si está Resuelta Y el rate es un número positivo.
+  const isRated = isResolved && typeof incidencia.rate === 'number' && incidencia.rate > 0;
+
+ const handleReleaseIncidence = () => {
     if (onUpdateStatus && !isSupervisor) {
       onUpdateStatus(incidencia.id, StatusType.created, undefined);
     }
     setIsAssigneeInfoModalOpen(false);
   };
+
 
   return (
     <div className={`incidencia-card ${incidencia.status} ${isDragging ? 'dragging' : ''} ${isSupervisor ? 'read-only' : ''}`}>
@@ -59,19 +64,26 @@ const IncidenceCardBase: React.FC<Props> = ({ incidencia, isDragging = false, on
 
       <div className="card-footer">
         <div className="footer-left">
-          <StarRating rating={incidencia.rate} />
+         {isRated ? (
+            <StarRating rating={incidencia.rate as number} />
+        )    : isResolved ? (
+            <span className="ratingpending" style={{color: '#f39c12', fontSize: '0.8 rem', fontWeight: '600'}}>
+              Calificación Pendiente</span>
+          ) : (
+
+            <span style={{minWidth: '80px'}}></span>
+          )
+      }
           <div
             className="assignee-icon-container"
             onClick={(e) => {
-              if (isSupervisor) return; // Disable click for supervisor
+              if (isSupervisor) return; 
               e.stopPropagation();
-              // Admins can open the AssignModal to add/edit/delete assignee
               if (user?.role === 'admin') {
                 setAssignModalMode(incidencia.assignedTo ? 'view' : 'add');
                 setIsAssignModalOpen(true);
                 return;
               }
-              // Non-admins keep previous behavior (view assignee info only if assigned)
               if (incidencia.assignedTo) {
                 setIsAssigneeInfoModalOpen(true);
               }

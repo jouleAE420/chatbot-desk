@@ -102,7 +102,7 @@ const IncidenceDetailPage: React.FC<Props> = ({ incidencias, onUpdateStatus }) =
               </div>
               <div className="detail-item">
                 <strong>Calificación:</strong>
-                <StarRating rating={incidencia.rate} />
+                <StarRating rating={incidencia.rate || 0} />
               </div>
               <div className="detail-item">
                 <strong>Proyecto:</strong>

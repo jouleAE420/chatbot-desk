@@ -1,94 +1,149 @@
-/* src/presentation/styles/_base.css */
-
-/* Variables CSS */
-:root {
-  /* Paleta de colores */
-  --color-primary: #3498db;
-  --color-primary-dark: #2980b9;
-  --color-secondary: #f39c12;
-  --color-secondary-dark: #e67e22;
-  --color-danger: #e74c3c;
-  --color-danger-dark: #c0392b;
-  --color-success: #2ecc71;
-  --color-success-dark: #27ae60;
-  --color-light-gray: #f2f2f2;
-  --color-medium-gray: #bdc3c7;
-  --color-dark-gray: #34495e;
-  --color-text-light: #fefefe;
-  --color-text-dark: #333333;
-  --color-border: #ddd;
-
-  /* Colores de estado */
-  --color-status-created: #3498db;
-  --color-status-pending: #f39c12;
-  --color-status-in-progress: #8e44ad;
-  --color-status-resolved: #2ecc71;
-  --color-status-closed: #7f8c8d;
-}
-
-/* Estilos de botones genéricos */
-.button {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  white-space: nowrap;
-}
-
-.button:hover {
-  opacity: 0.9;
-}
-
-.button-primary {
-  background-color: var(--color-primary);
-  color: var(--color-text-light);
-}
-
-.button-primary:hover {
-  background-color: var(--color-primary-dark);
-}
-
-.button-secondary {
-  background-color: var(--color-secondary);
-  color: var(--color-text-light);
-}
-
-.button-secondary:hover {
-  background-color: var(--color-secondary-dark);
-}
-
-.button-danger {
-  background-color: var(--color-danger);
-  color: var(--color-text-light);
-}
-
-.button-danger:hover {
-  background-color: var(--color-danger-dark);
-}
-
-/* Estilos de formularios genéricos */
-.form-group {
-  margin-bottom: 15px;
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
-  flex-direction: column;
+  justify-content: center; /* Centrado horizontal */
+  align-items: flex-start; /* Alinear arriba */
+  z-index: 2000;
+  overflow-y: auto; /* Permitir scroll vertical */
+  padding: 2rem 0; /* Añadir espacio arriba y abajo */
+}
+
+.modal-content {
+  background-color: var(--filter-bg, #2a2a3a); /* Usar variable o un color por defecto */
+  padding: 2rem;
+  border-radius: var(--border-radius, 8px); /* Usar variable o un radio por defecto */
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 90%;
+  max-width: 400px; /* Max-width del FilterForm */
+  animation: slide-down 0.3s ease-out;
+  margin: auto 0; /* Ayuda al centrado vertical en casos donde no hay scroll */
+  color: var(--color-text, #f0f0f0); /* Color de texto general para modales */
+}
+
+@keyframes slide-down {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--filter-title-color, #ffffff); /* Usar variable o un color por defecto */
+}
+
+.modal-close-button { /* Renombrado de .close-button a .modal-close-button */
+  background: none;
+  border: none;
+  color: var(--color-text, #f0f0f0); /* Usar variable o un color por defecto */
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+/* --- Estilos Base para Formularios (desde FilterForm.css) --- */
+.form-group {
+  margin-bottom: 1rem;
+  text-align: left;
 }
 
 .form-group label {
-  margin-bottom: 5px;
-  font-weight: bold;
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #a9a9b3; /* Color específico del label */
 }
 
 .form-group input,
-.form-group select,
-.form-group textarea {
-  padding: 10px;
-  border: 1px solid var(--color-border);
-  border-radius: 5px;
-  font-size: 16px;
+.form-group select {
   width: 100%;
-  box-sizing: border-box; 
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--filter-input-border, #4a4a5a); /* Usar variable o un color por defecto */
+  background-color: var(--filter-input-bg, #3a3a4a); /* Usar variable o un color por defecto */
+  color: var(--color-text, #f0f0f0); /* Usar variable o un color por defecto */
+  font-family: var(--font-family, 'Roboto', sans-serif); /* Usar variable o una fuente por defecto */
+  font-size: 1rem;
 }
 
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #007bff; /* Color de foco */
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+/* Botones genéricos (adaptados de apply-button/clear-button) */
+.primary-button, .secondary-button {
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.primary-button {
+  background-color: var(--filter-apply-bg, #007bff); /* Color primario */
+  color: var(--color-bg, #ffffff); /* Color de texto sobre primario */
+}
+
+.primary-button:hover {
+  background-color: var(--filter-apply-hover, #0056b3); /* Hover primario */
+}
+
+.secondary-button {
+  background-color: #4a4a5a; /* Color secundario */
+  color: var(--color-text, #f0f0f0); /* Color de texto sobre secundario */
+}
+
+.secondary-button:hover {
+  background-color: #5a5a6a; /* Hover secundario */
+}
+
+/* Media queries para modales/formularios responsivos */
+@media (max-width: 480px) {
+  .modal-content {
+    width: 95%;
+    padding: 1.5rem;
+    margin: 0; /* Resetear margen en móvil */
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .primary-button, .secondary-button {
+    width: 100%;
+  }
+}

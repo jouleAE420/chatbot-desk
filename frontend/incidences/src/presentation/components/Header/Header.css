@@ -20,7 +20,22 @@
   align-items: center;
   justify-content: space-between; /* Added */
 }
+.add-user-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #fff; /* <-- Esto hará que el icono sea blanco */
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+  margin-right: 10px; /* Para separarlo un poco del UserProfileDropdown */
+}
 
+.add-user-button:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* Un ligero fondo al pasar el ratón */
+}
 .header-title {
   color: var(--color-status-in-progress);
   font-size: 2.5rem;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { BackButton } from '../components/BackButton';
 import { GenericBackButton } from '../components/GenericBackButton'; 
 import type { TicketOptions } from '../../domain/models/incidencia';
@@ -9,10 +9,14 @@ import StarRating from '../components/StarRating';
 import { timeAgo } from '../utils/date';
 import useWindowSize from '../utils/useWindowSize';
 import './IncidenceDetailPage.css';
+import { useAuth } from '../context/AuthContext';
+import ConfirmationModal from '../components/ConfirmationModal';
+import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
+
 
 interface Props {
   incidencias: TicketOptions[];
-  onUpdateStatus: (id: number, newStatus: StatusType) => void;
+  onUpdateStatus: (id: number, newStatus: StatusType, assignedTo?: string) => void;
 }
 
 // Sub-component for status badge
@@ -22,9 +26,12 @@ const StatusBadge: React.FC<{ status: StatusType }> = ({ status }) => {
 
 const IncidenceDetailPage: React.FC<Props> = ({ incidencias, onUpdateStatus }) => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // CORREGIDO
+  const location = useLocation(); // CORREGIDO
   const { width } = useWindowSize();
 
+  const { user } = useAuth();
+  const [pendingAction, setPendingAction] = useState<{ action: () => void; message: React.ReactNode } | null>(null);
   const [isCommentExpanded, setCommentExpanded] = useState(true);
   const [isDetailsExpanded, setDetailsExpanded] = useState(true);
 
@@ -35,12 +42,62 @@ const IncidenceDetailPage: React.FC<Props> = ({ incidencias, onUpdateStatus }) =
       setDetailsExpanded(true); // Expand details on desktop
     }
   }, [width]);
+ const incidencia = incidencias.find(inc => inc.id === parseInt(id || ''));
 
-  const incidencia = incidencias.find(inc => inc.id === parseInt(id || ''));
+  // --- LÓGICA DE NAVEGACIÓN CONTEXTUAL ---
+  let relevantIncidences = incidencia
+    ? incidencias.filter(i => i.status === incidencia.status)
+    : [];
 
-  const handleMoveClick = (newStatus: StatusType) => {
-    if (onUpdateStatus && incidencia) {
-      onUpdateStatus(incidencia.id, newStatus);
+  if (user?.role === 'operador' && incidencia) {
+    if (incidencia.status === StatusType.created) {
+      relevantIncidences = relevantIncidences.filter(inc => !inc.assignedTo);
+    } else {
+      relevantIncidences = relevantIncidences.filter(inc => inc.assignedTo === user.id);
+    }
+  }
+
+  const currentIndex = incidencia
+    ? relevantIncidences.findIndex(inc => inc.id === incidencia.id)
+    : -1;
+
+  const previousIncidence = currentIndex > 0 ? relevantIncidences[currentIndex - 1] : null;
+  const nextIncidence = currentIndex < relevantIncidences.length - 1 ? relevantIncidences[currentIndex + 1] : null;
+
+  const fromPath = (location.state as { from?: string })?.from;
+
+
+  const navigateToIncidence = (targetId?: number) => {
+    if (targetId) {
+      // Al navegar entre incidencias, pasamos el estado 'from' original
+      // para que el botón "Volver" siga funcionando correctamente.
+      navigate(`/incidencias/${targetId}`, { state: { from: fromPath } });
+    }
+  };
+
+
+
+
+
+  const handleUpdateStatusWithConfirmation = (newStatus: StatusType) => {
+    if (!incidencia) return;
+
+    const isAssigningFromCreated = 
+      incidencia.status === StatusType.created &&
+      (newStatus === StatusType.pending || newStatus === StatusType.in_progress) &&
+      !incidencia.assignedTo &&
+      user?.role === 'operador';
+
+    if (isAssigningFromCreated) {
+      setPendingAction({
+        message: `¿Confirmas que quieres asignarte esta incidencia y moverla a "${newStatus}"?`,
+        action: () => {
+          onUpdateStatus(incidencia.id, newStatus, user?.id);
+          navigate('/');
+        }
+      });
+    } else {
+      onUpdateStatus(incidencia.id, newStatus, incidencia.assignedTo);
       navigate('/');
     }
   };
@@ -56,17 +113,29 @@ const IncidenceDetailPage: React.FC<Props> = ({ incidencias, onUpdateStatus }) =
 
   return (
     <div className="incidence-detail-page">
+      <ConfirmationModal
+        isOpen={!!pendingAction}
+        title="Confirmar Acción"
+        onConfirm={() => {
+          pendingAction?.action();
+          setPendingAction(null);
+        }}
+        onCancel={() => setPendingAction(null)}
+      >
+        {pendingAction?.message}
+      </ConfirmationModal>
+
       <div className="detail-header">
         <BackButton />
         <div className="header-content">
           <h2>{incidencia.parkingId}</h2>
           <p>Creada hace {timeAgo(incidencia.createdAt)}</p>
         </div>
-        <div className="header-actions">
+    <div className="header-actions">
           {width && width >= 768 && ( // Conditionally render for desktop
             <StatusActionButtons 
               status={incidencia.status} 
-              onMoveClick={handleMoveClick} 
+              onMoveClick={handleUpdateStatusWithConfirmation} 
             />
           )}
         </div>
@@ -133,13 +202,33 @@ const IncidenceDetailPage: React.FC<Props> = ({ incidencias, onUpdateStatus }) =
         </div>
       </div>
 
-      {/* Mobile-only floating action bar */}
-      <div className="mobile-actions-bar">
+       <div className="mobile-actions-bar">
         <StatusActionButtons 
           status={incidencia.status} 
-          onMoveClick={handleMoveClick} 
+          onMoveClick={handleUpdateStatusWithConfirmation} 
         />
       </div>
+
+      {previousIncidence && (
+        <button 
+          className="nav-button prev" 
+          onClick={() => navigateToIncidence(previousIncidence.id)}
+          title="Incidencia Anterior"
+        >
+          <IconChevronLeft size={32} />
+        </button>
+      )}
+      {nextIncidence && (
+        <button 
+          className="nav-button next" 
+          onClick={() => navigateToIncidence(nextIncidence.id)}
+          title="Siguiente Incidencia"
+        >
+          <IconChevronRight size={32} />
+        </button>
+      )}
+
+
     </div>
   );
 };

@@ -1,80 +1,54 @@
-/* Styles for move buttons */
 .card-actions {
   margin-top: 1rem;
   display: flex;
+  gap: 0.75rem;
+  justify-content: flex-start;
+}
+
+.action-button {
+  display: inline-flex;
+  align-items: center;
   gap: 0.5rem;
-  justify-content: space-between;
-}
-
-.action-button-move {
-  flex-basis: auto;
-  flex-shrink: 0;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background-color: rgba(255, 255, 255, 0.05);
-  color: var(--color-text);
-  border-radius: 5px;
-  padding: 0.4rem 0.8rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
   font-family: var(--font-family);
-  font-weight: 500;
-  font-size: 0.8rem;
+  font-weight: 600;
+  font-size: 0.875rem;
   cursor: pointer;
-  transition: all 0.2s ease;
-  backdrop-filter: blur(5px); /* Glassmorphism effect */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  color: #fff; /* Texto blanco para todos los botones */
 }
 
-.action-button-move:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.4);
+.action-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.action-button-move.-unassign {
-  background-color: rgba(128, 128, 128, 0.2); /* A light grey */
-  border-color: rgba(128, 128, 128, 0.4);
-  color: var(--color-text); /* White text for contrast */
-}
-.action-button-move.-unassign:hover {
-  background-color: rgba(128, 128, 128, 0.3); /* Slightly darker on hover */
-  border-color: rgba(128, 128, 128, 0.6);
+.action-button:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* Color coding for move buttons */
-.action-button-move.-to-pending {
-  background-color: rgba(0, 168, 243, 0.2);
-  border-color: rgba(0, 168, 243, 0.4);
-  color: var(--color-text);
-}
-.action-button-move.-to-pending:hover {
-  background-color: rgba(0, 138, 199, 0.3); /* Darker quaternary */
-  border-color: rgba(0, 138, 199, 0.6);
-  color: var(--color-text); /* Asegurar texto blanco */
+/* Colores sólidos para cada estado */
+.action-button.-to-pending {
+  background-color: #00a8f3; /* Azul */
 }
 
-.action-button-move.-to-progress {
-  background-color: rgba(240, 196, 0, 0.2);
-  border-color: rgba(240, 196, 0, 0.4);
-  color: var(--color-text);
-}
-.action-button-move.-to-progress:hover {
-  background-color: rgba(199, 163, 0, 0.3); /* Darker secondary */
-  border-color: rgba(199, 163, 0, 0.6);
-  color: var(--color-text); /* Asegurar texto blanco */
+.action-button.-to-progress {
+  background-color: #f0c400; /* Amarillo */
+  color: #333; /* Texto oscuro para mejor contraste con amarillo */
 }
 
-.action-button-move.-to-resolved {
-  background-color: rgba(29, 245, 0, 0.2);
-  color: var(--color-text);
-  border-color: rgba(29, 245, 0, 0.4);
-}
-.action-button-move.-to-resolved:hover {
-  background-color: rgba(23, 194, 0, 0.3); /* Darker tertiary */
-  color: var(--color-text); /* Asegurar texto blanco */
-  border-color: rgba(23, 194, 0, 0.6);
+.action-button.-to-resolved {
+  background-color: #1df500; /* Verde */
 }
 
 @media (max-width: 480px) {
-  .action-button-move {
-    font-size: 0.7rem;
-    padding: 0.3rem 0.5rem;
+  .action-button {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+    gap: 0.3rem;
   }
 }

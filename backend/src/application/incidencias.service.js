@@ -1,9 +1,9 @@
 const repository = require('../infrastructure/data/incidencias.repository');
 
-const getIncidencias = async (user) => {
+const getIncidencias = async (user, page, limit) => {
   // Now all roles can see all incidents.
-  const todasLasIncidencias = await repository.getAll({});
-  return todasLasIncidencias;
+  const incidenciasPaginadas = await repository.getAll({}, page, limit);
+  return incidenciasPaginadas;
 };
 
 const updateIncidenciaStatus = async (id, status, assignedTo) => {

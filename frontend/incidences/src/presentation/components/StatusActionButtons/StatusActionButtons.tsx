@@ -1,44 +1,44 @@
 import React from 'react';
 import { StatusType } from '../../../domain/models/incidencia';
 import './StatusActionButtons.css';
-import { useAuth } from '../../context/AuthContext'; // Import useAuth
+import { IconPlayerPause, IconPlayerPlay, IconCircleCheck, IconBan } from '@tabler/icons-react';
 
 interface Props {
   status: StatusType;
-  onMoveClick: (newStatus: StatusType, assignedTo?: string) => void;
+  onMoveClick: (newStatus: StatusType) => void;
   className?: string;
   assignedTo?: string;
 }
 
-const StatusActionButtons: React.FC<Props> = ({ status, onMoveClick, className, assignedTo }) => {
-  const { user } = useAuth(); // Get the logged-in user
-
-  const handleMoveClick = (newStatus: StatusType) => {
-    // If moving to pending or in_progress, automatically assign the current user
-    if (newStatus === StatusType.pending || newStatus === StatusType.in_progress) {
-      onMoveClick(newStatus, user?.username); // Use logged-in user's name
-    } else {
-      // For other statuses (like resolved), just move it without changing assignee
-      onMoveClick(newStatus, assignedTo);
-    }
-  };
+const StatusActionButtons: React.FC<Props> = ({ status, onMoveClick, className }) => {
+  // La lógica de asignación ahora vive en el componente padre (HomePage, IncidenceDetailPage)
+  // Este componente solo se encarga de mostrar los botones y notificar el clic.
 
   return (
     <div className={`card-actions ${className || ''}`}>
-      {user?.role === 'admin' && assignedTo && (
-        <button onClick={() => onMoveClick(status, undefined)} className="action-button-move -unassign">Desasignar</button>
-      )}
       {status === StatusType.created && (
         <>
-          <button onClick={() => handleMoveClick(StatusType.pending)} className="action-button-move -to-pending">A Pendiente</button>
-          <button onClick={() => handleMoveClick(StatusType.in_progress)} className="action-button-move -to-progress">A Progreso</button>
+          <button onClick={() => onMoveClick(StatusType.pending)} className="action-button -to-pending">
+            <IconPlayerPause size={16} />
+            <span>Pendiente</span>
+          </button>
+          <button onClick={() => onMoveClick(StatusType.in_progress)} className="action-button -to-progress">
+            <IconPlayerPlay size={16} />
+            <span>A Progreso</span>
+          </button>
         </>
       )}
       {status === StatusType.pending && (
-        <button onClick={() => handleMoveClick(StatusType.in_progress)} className="action-button-move -to-progress">A Progreso</button>
+        <button onClick={() => onMoveClick(StatusType.in_progress)} className="action-button -to-progress">
+          <IconPlayerPlay size={16} />
+          <span>Iniciar Progreso</span>
+        </button>
       )}
       {status === StatusType.in_progress && (
-        <button onClick={() => handleMoveClick(StatusType.resolved)} className="action-button-move -to-resolved">A Resuelta</button>
+        <button onClick={() => onMoveClick(StatusType.resolved)} className="action-button -to-resolved">
+          <IconCircleCheck size={16} />
+          <span>Marcar Resuelta</span>
+        </button>
       )}
     </div>
   );

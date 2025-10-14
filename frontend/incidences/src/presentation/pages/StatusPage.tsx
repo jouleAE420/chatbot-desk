@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+//import React, { useMemo, useState } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import type { TicketOptions } from '../../domain/models/incidencia';
 import { StatusType } from '../../domain/models/incidencia';
@@ -6,7 +6,9 @@ import IncidenceCardBase from '../components/IncidenceCard/IncidenceCardBase';
 import { GenericBackButton } from '../components/GenericBackButton';
 import type { ColumnState } from '../App'; 
 import FilterForm from '../components/FilterForm/FilterForm'; 
+//import { useAuth } from '../context/AuthContext';
 import { useAuth } from '../context/AuthContext';
+
 import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react';
 import './StatusPage.css'; // Import the new CSS file
 
@@ -19,6 +21,7 @@ interface Props {
   onSortChange: (status: StatusType, sortOrder: 'asc' | 'desc') => void;
   onCloseFilterForm: (status: StatusType) => void;
   onPageChange: (status: StatusType, newPage: number) => void;
+  assignees: string[];
 }
 
 const statusMap: { [key: string]: { dataValue: StatusType; title: string } } = {
@@ -32,11 +35,10 @@ const StatusPage: React.FC<Props> = ({
     incidencias, 
     onUpdateStatus,
     columnStates,
-    onFilterButtonClick,
     onApplyFilter,
-    onSortChange,
     onCloseFilterForm,
-    onPageChange
+    onPageChange, 
+    assignees
 }) => {
     const { statusKey } = useParams<{ statusKey: string }>();
     const navigate = useNavigate();
@@ -44,10 +46,7 @@ const StatusPage: React.FC<Props> = ({
     const { user } = useAuth();
     const itemsPerPage = 8;
 
-    const assignees = useMemo(() => {
-        const allAssignees = incidencias.map(inc => inc.assignedTo).filter((name): name is string => !!name);
-        return Array.from(new Set(allAssignees));
-    }, [incidencias]);
+    
 
     const statusInfo = statusKey ? statusMap[statusKey] : undefined;
 
@@ -66,6 +65,15 @@ const StatusPage: React.FC<Props> = ({
     let filteredIncidencias = incidencias.filter(
         inc => inc.status === statusInfo.dataValue
     );
+      if (user?.role === 'operador') {
+      if (statusInfo.dataValue === StatusType.created) {
+        // Para 'Creadas', los operadores solo ven las incidencias no asignadas
+        filteredIncidencias = filteredIncidencias.filter(inc => !inc.assignedTo);
+      } else {
+        // Para los demás estados, los operadores solo ven las incidencias asignadas a ellos
+        filteredIncidencias = filteredIncidencias.filter(inc => inc.assignedTo === user.id);
+      }
+    }
 
     if (currentColumnState.currentFilterValues.parkingId) {
         filteredIncidencias = filteredIncidencias.filter(inc =>

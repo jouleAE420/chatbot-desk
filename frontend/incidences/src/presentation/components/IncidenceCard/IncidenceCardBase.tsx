@@ -36,7 +36,23 @@ const IncidenceCardBase: React.FC<Props> = ({ incidencia, isDragging = false, on
     }
     setIsAssigneeInfoModalOpen(false);
   };
+const handleStatusUpdate = (newStatus: StatusType) => {
+    if (!onUpdateStatus) return;
 
+    const isAssigningFromCreated = 
+      incidencia.status === StatusType.created &&
+      (newStatus === StatusType.pending || newStatus === StatusType.in_progress) &&
+      !incidencia.assignedTo &&
+      user?.role === 'operador';
+
+    if (isAssigningFromCreated) {
+        // Auto-asigna al usuario actual sin pedir confirmación en este contexto
+        onUpdateStatus(incidencia.id, newStatus, user.id);
+    } else {
+        // En cualquier otro caso, mantiene el asignado actual o lo deja como está
+        onUpdateStatus(incidencia.id, newStatus, incidencia.assignedTo);
+    }
+  };
 
   return (
     <div className={`incidencia-card ${incidencia.status} ${isDragging ? 'dragging' : ''} ${isSupervisor ? 'read-only' : ''}`}>
@@ -47,17 +63,12 @@ const IncidenceCardBase: React.FC<Props> = ({ incidencia, isDragging = false, on
         </div>
       </div>
 
-      {/* Status Action Buttons (only for small screens and not for supervisors) */}
       {onUpdateStatus && width && width < 769 && !isSupervisor && (
         <div onClick={(e) => e.stopPropagation()}>
-          <StatusActionButtons
+         <StatusActionButtons
             status={incidencia.status}
             assignedTo={incidencia.assignedTo}
-            onMoveClick={(newStatus, assignedTo) => {
-              if (onUpdateStatus) {
-                onUpdateStatus(incidencia.id, newStatus, assignedTo);
-              }
-            }}
+            onMoveClick={handleStatusUpdate}
           />
         </div>
       )}
@@ -105,7 +116,7 @@ const IncidenceCardBase: React.FC<Props> = ({ incidencia, isDragging = false, on
             <p className="assignee-name">{incidencia.assignedTo}</p>
             <div className="modal-actions">
               <button onClick={() => setIsAssigneeInfoModalOpen(false)} className="button-secondary">Cerrar</button>
-              {user?.username === incidencia.assignedTo && !isSupervisor && (
+              {user?.id === incidencia.assignedTo && !isSupervisor && (
                 <button onClick={handleReleaseIncidence} className="button-danger">Liberar</button>
               )}
             </div>

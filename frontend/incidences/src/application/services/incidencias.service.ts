@@ -12,8 +12,8 @@ const getAuthHeaders = () => {
   };
 };
 
-export const getAllIncidencias = async (): Promise<TicketOptions[]> => {
-  const response = await fetch(API_URL, {
+export const getAllIncidencias = async (page: number, limit: number): Promise<TicketOptions[]> => {
+  const response = await fetch(`${API_URL}?page=${page}&limit=${limit}`, {
     headers: getAuthHeaders(),
   });
 

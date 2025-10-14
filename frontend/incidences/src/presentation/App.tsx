@@ -90,7 +90,7 @@ function App() {
     const loadIncidencias = async () => {
       setLoading(true);
       try {
-        const data = await getAllIncidencias();
+        const data = await getAllIncidencias(1,1000);
         const sortedData = data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         setIncidencias(sortedData);
       } catch (error) {

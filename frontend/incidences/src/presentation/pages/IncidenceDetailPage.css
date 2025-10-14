@@ -203,3 +203,52 @@
     border-color: #17c200;
   }
 }
+.nav-button {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1000;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  
+  background-color: rgba(0, 0, 0, 0.3);
+  color: white;
+  
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  backdrop-filter: blur(5px);
+}
+
+.nav-button:hover {
+  background-color: rgba(0, 0, 0, 0.6);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.nav-button.prev {
+  left: 20px;
+}
+
+.nav-button.next {
+  right: 20px;
+}
+
+/* Estilos para pantallas pequeñas */
+@media (max-width: 768px) {
+  .nav-button {
+    width: 40px;
+    height: 40px;
+  }
+  .nav-button.prev {
+    left: 10px;
+  }
+  .nav-button.next {
+    right: 10px;
+  }
+}

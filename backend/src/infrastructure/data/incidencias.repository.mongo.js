@@ -3,8 +3,14 @@ const { ObjectId } = require('mongodb');
 
 const getCollection = () => getDB().collection('incidencias');
 
-const getAll = async (query = {}) => {
-  return await getCollection().find(query).toArray();
+const getAll = async (query = {}, page = 1, limit = 10) => {
+  const skip = (page - 1) * limit;
+  return await getCollection()
+    .find(query)
+    .sort({ createdAt: -1 }) // Ordenar por fecha de creación descendente
+    .skip(skip)
+    .limit(limit)
+    .toArray();
 };
 
 const updateStatus = async (id, newStatus, assignedTo) => {

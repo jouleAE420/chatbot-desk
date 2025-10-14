@@ -72,15 +72,15 @@ const HomePage: React.FC<Props> = ({
     return {
       [StatusType.created]: {
         title: 'Creadas',
-        incidencias: processedIncidencias.filter(inc => inc.status === StatusType.created).slice(0, 4),
+        incidencias: processedIncidencias.filter(inc => inc.status === StatusType.created && (user?.role === 'admin' || user?.role === 'supervisor' || !inc.assignedTo)).slice(0, 4),
       },
       [StatusType.pending]: {
         title: 'Pendientes',
-        incidencias: processedIncidencias.filter(inc => inc.status === StatusType.pending && (user?.role === 'admin' || user?.role === 'supervisor' || inc.assignedTo === user?.username)).slice(0, 6),
+        incidencias: processedIncidencias.filter(inc => inc.status === StatusType.pending && (user?.role === 'admin' || user?.role === 'supervisor' || inc.assignedTo === user?.id)).slice(0, 6),
       },
       [StatusType.in_progress]: {
         title: 'En Progreso',
-        incidencias: processedIncidencias.filter(inc => inc.status === StatusType.in_progress && (user?.role === 'admin' || user?.role === 'supervisor' || inc.assignedTo === user?.username)).slice(0, 4),
+        incidencias: processedIncidencias.filter(inc => inc.status === StatusType.in_progress && (user?.role === 'admin' || user?.role === 'supervisor' || inc.assignedTo === user?.id)).slice(0, 4),
       },
       [StatusType.resolved]: {
         title: 'Resueltas',
@@ -108,8 +108,8 @@ const HomePage: React.FC<Props> = ({
 
     if (isAssigningFromCreated) {
       setPendingAction({
-        message: `¿Confirmas que quieres asignarte esta incidencia y moverla a \"${newStatus}\"?`,
-        action: () => onUpdateStatus(id, newStatus, user?.username)
+        message: `¿Confirmas que quieres asignarte esta incidencia y moverla a \\\"${newStatus}\\\"?`,
+        action: () => onUpdateStatus(id, newStatus, user?.id)
       });
     } else {
       onUpdateStatus(id, newStatus, currentAssignee);
@@ -168,7 +168,6 @@ const HomePage: React.FC<Props> = ({
             const currentColumnState = columnStates[key as StatusType];
             let filteredIncidencias = col.incidencias;
 
-            // Individual column filtering and sorting logic...
             const columnFilters = currentColumnState.currentFilterValues;
             if (Object.keys(columnFilters).length > 0) {
                 filteredIncidencias = filteredIncidencias.filter(inc => {

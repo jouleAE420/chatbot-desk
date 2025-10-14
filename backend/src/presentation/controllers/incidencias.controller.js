@@ -3,8 +3,9 @@ const service = require('../../application/incidencias.service');
 const getIncidencias = async (req, res) => {
   try {
     const user = req.user; // Inyectado por authMiddleware
-    const todasLasIncidencias = await service.getIncidencias(user);
-    res.status(200).json(todasLasIncidencias);
+    const { page = 1, limit = 10 } = req.query; // Extraer page y limit de la query
+    const incidenciasPaginadas = await service.getIncidencias(user, parseInt(page), parseInt(limit));
+    res.status(200).json(incidenciasPaginadas);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

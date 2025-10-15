@@ -39,7 +39,7 @@ mockIncidencias = Array.from({ length: 30 }, (_, i) => ({
     ticketType: ticketTypes[Math.floor(Math.random() * ticketTypes.length)],
     parkingId: locations[Math.floor(Math.random() * locations.length)],
     createdAt: new Date(Date.now() - Math.random() * 1000 * 60 * 60 * 24 * 7).getTime(),
-    status: statuses[Math.floor(Math.random() * statuses.length)],
+    status: 'CREATED',
     assignedTo: assignees[Math.floor(Math.random() * assignees.length)],
     resolvedAt: null,
   }));
@@ -60,7 +60,7 @@ mockIncidencias = Array.from({ length: 30 }, (_, i) => ({
     }
   });
 
-  persistIncidents();
+  //persistIncidents();
 }
 
 const getAll = async (query = {}) => {
@@ -119,6 +119,7 @@ const updateRating = async (id, newRating, newComment) => {
   persistIncidents();
   return incidencia;
 };
+
 
 
 module.exports = {

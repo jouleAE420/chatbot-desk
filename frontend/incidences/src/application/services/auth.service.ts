@@ -63,3 +63,26 @@ export const login = async (credentials: LoginCredentials) => {
     throw new Error(error instanceof Error ? error.message : 'No se pudo conectar al servidor.');
   }
 };
+export const register = async (userData: object) => {
+  try {
+    const response = await fetch(`${AUTH_API_URL}/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    });
+
+    if (!response.ok) {
+      try {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Error en el registro: ${response.statusText}`);
+      } catch (jsonError) {
+        throw new Error(`Error en el registro: ${response.status} ${response.statusText}`);
+      }
+    }
+    return response.json();
+  } catch (error) {
+    throw new Error(error instanceof Error ? error.message : 'No se pudo conectar al servidor.');
+  }
+};

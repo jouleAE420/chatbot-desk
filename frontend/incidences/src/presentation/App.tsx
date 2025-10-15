@@ -14,6 +14,7 @@ import StatusDashboardPage from './pages/StatusDashboardPage';
 import LoginPage from './pages/LoginPage';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import { useAuth } from './context/AuthContext';
+import { Toaster } from 'react-hot-toast';
 
 //este export va aqui porque lo usan varios componentes
 export type ColumnState = {
@@ -127,6 +128,7 @@ function App() {
 //el return retorna el JSX que define la estructura visual del componente
   return (
     <div className="App">
+      <Toaster/>
       {showHeader && (
         <Header
           columnStates={columnStates}

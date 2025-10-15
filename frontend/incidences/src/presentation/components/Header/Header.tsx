@@ -9,6 +9,7 @@ import { IconUserPlus, IconLogout, IconMenu2, IconX } from '@tabler/icons-react'
 import ViewSwitcher from '../ViewSwitcher/ViewSwitcher';
 import { UserProfileDropdown }   from '../UserProfileDropdown/UserProfileDropdown.tsx';
 import AddUserModal from '../AddUserModal/AddUserModal';
+import { register } from '../../../application/services/auth.service';
 
 const statusKeyMap: { [key: string]: StatusType } = {
   created: StatusType.created,
@@ -45,7 +46,14 @@ const Header: React.FC<HeaderProps> = ({
 
   const currentStatusKey = location.pathname.substring(1);
   const currentStatus = statusKeyMap[currentStatusKey];
-
+const handleAddUser = async (userData: { username: string; email: string; role: string; password: string }) => {
+  try {
+    await register(userData); // <-- Cambio aquí
+  } catch (error) {
+    console.error("Error al registrar el usuario:", error);
+    throw error;
+  }
+};
   const areFiltersApplied = currentStatus
     ? Object.keys(columnStates[currentStatus].currentFilterValues).length > 0
     : (columnStates.all && Object.keys(columnStates.all.currentFilterValues).length > 0);
@@ -97,14 +105,10 @@ const Header: React.FC<HeaderProps> = ({
       </div>
 
       <AddUserModal
-        isOpen={isAddUserModalOpen}
-        onClose={() => setIsAddUserModalOpen(false)}
-        onAddUser={(userData) => {
-          console.log('Datos del nuevo usuario:', userData);
-          alert(`Usuario ${userData.username} agregado (simulado).`);
-          setIsAddUserModalOpen(false);
-        }}
-      />
+  isOpen={isAddUserModalOpen}
+  onClose={() => setIsAddUserModalOpen(false)}
+  onAddUser={handleAddUser}
+/>
     </header>
   );
 };

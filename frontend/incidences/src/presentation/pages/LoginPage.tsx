@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+
 import { IconMail, IconLock } from '@tabler/icons-react';
 
 import './LoginPage.css';
@@ -11,16 +11,16 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState('');
   const { login } = useAuth();
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    try {
-      await login({ email, password });
-      // The redirect is handled inside the login function in the context
-    } catch (err: any) {
-      setError(err.message || 'Failed to login');
-    }
-  };
+const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError('');
+  try {
+    await login({ email, password });
+    // The redirect is handled inside the login function in the context
+  } catch (err: any) {
+    setError(err.message || 'Failed to login');
+  }
+};
 
     return (
     <div className="login-page-container">

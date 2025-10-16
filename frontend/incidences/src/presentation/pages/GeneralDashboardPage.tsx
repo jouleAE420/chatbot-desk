@@ -5,21 +5,23 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 import {
   calculateIncidencesByStatus,
   calculateIncidencesByType,
-
   calculateAverageResolutionTime,
   calculateOpenIncidences,
   calculateIncidencesCreatedToday,
-  calculateAverageCreatedLast7Days, // <-- Añadido
+  calculateAverageCreatedLast7Days,
 } from '../../application/services/statistics.service';
 import {
   IconMessageReport,
   IconLoader2,
   IconCircleCheck,
-  IconMenu2,
-  IconX,
-  IconArrowUp,   // <-- Añadido
-  IconArrowDown, // <-- Añadido
-  IconMinus,     // <-- Añadido
+  IconArrowUp,
+  IconArrowDown,
+  IconMinus,
+  // --- ICONOS DE SIDEBAR ---
+  IconLayoutSidebarLeftCollapse,
+  IconLayoutSidebarLeftExpand,
+  // --- NUEVO ICONO DE MENÚ HAMBURGUESA ---
+  IconMenu2, 
 } from '@tabler/icons-react';
 import './GeneralDashboardPage.css';
 
@@ -31,83 +33,100 @@ interface Props {
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 const GeneralDashboardPage: React.FC<Props> = ({ incidencias, onStatisticsClick }) => {
-  // Umbrales para la coloración de KPIs
   const openIncidencesThresholds = {
-    warning: 10, // Más de 10 abiertas es advertencia
-    danger: 20,  // Más de 20 abiertas es peligro
+    warning: 10,
+    danger: 20,
   };
 
   const avgResolutionTimeThresholds = {
-    good: 24, // Menos de 24 horas es bueno
-    warning: 48, // Entre 24 y 48 horas es advertencia
+    good: 24,
+    warning: 48,
   };
 
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  // Por defecto, la barra estará abierta en escritorio.
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   const byStatus = useMemo(() => calculateIncidencesByStatus(incidencias), [incidencias]);
   const byType = useMemo(() => calculateIncidencesByType(incidencias), [incidencias]);
- // const byAssignee = useMemo(() => calculateIncidencesByAssignee(incidencias), [incidencias]); // Descomentado si se usa en alguna gráfica
   const averageResolutionTime = useMemo(() => calculateAverageResolutionTime(incidencias), [incidencias]);
   const openIncidences = useMemo(() => calculateOpenIncidences(incidencias), [incidencias]);
   const incidencesCreatedToday = useMemo(() => calculateIncidencesCreatedToday(incidencias), [incidencias]);
-  const avgCreatedLast7Days = useMemo(() => calculateAverageCreatedLast7Days(incidencias), [incidencias]); // <-- Añadido
+  const avgCreatedLast7Days = useMemo(() => calculateAverageCreatedLast7Days(incidencias), [incidencias]);
 
-  // Función auxiliar para obtener la clase CSS del KPI
   const getKpiClass = (value: number, type: 'openIncidences' | 'avgResolutionTime') => {
     if (type === 'openIncidences') {
       if (value > openIncidencesThresholds.danger) return 'kpi-danger';
       if (value > openIncidencesThresholds.warning) return 'kpi-warning';
-      return 'kpi-good'; // Por defecto para pocas incidencias abiertas
+      return 'kpi-good';
     }
     if (type === 'avgResolutionTime') {
-      if (value > avgResolutionTimeThresholds.warning) return 'kpi-danger'; // Mayor tiempo es peor
-      if (value > avgResolutionTimeThresholds.good) return 'kpi-warning'; // Tiempo medio
-      return 'kpi-good'; // Menor tiempo es mejor
+      if (value > avgResolutionTimeThresholds.warning) return 'kpi-danger';
+      if (value > avgResolutionTimeThresholds.good) return 'kpi-warning';
+      return 'kpi-good';
     }
     return '';
   };
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
+  // Función de toggle unificada
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
   };
 
   return (
-    <div className={`general-dashboard ${isMobileMenuOpen ? 'mobile-menu-open' : ''}`}>
+    <div className={`general-dashboard ${isSidebarOpen ? 'sidebar-open' : 'sidebar-collapsed'}`}>
+     
       {onStatisticsClick && (
-        <div className="shortcuts-container">
-          <button className="mobile-menu-button" onClick={toggleMobileMenu}>
-            {isMobileMenuOpen ? <IconX /> : <IconMenu2 />}
+          // --- BOTÓN FLOTANTE PARA MÓVIL (NUEVO) ---
+          <button 
+              onClick={toggleSidebar} 
+              className="mobile-sidebar-button" 
+              title="Abrir Menú de Dashboards"
+          >
+              <IconMenu2 size={28} />
           </button>
-          <div className="dashboard-shortcuts">
-            <button onClick={() => onStatisticsClick(StatusType.created)} className="shortcut-button shortcut-created" title="Dashboard Creadas">
-              <IconMessageReport stroke={2} className="created-icon" />
-              <span>Sin atender</span> {/* <-- Texto modificado */}
-            </button>
-            <button onClick={() => onStatisticsClick(StatusType.in_progress)} className="shortcut-button shortcut-in-progress" title="Dashboard En Progreso">
-              <IconLoader2 stroke={2} className="in-progress-icon" />
-              <span>En Progreso</span>
-            </button>
-            <button onClick={() => onStatisticsClick(StatusType.resolved)} className="shortcut-button shortcut-resolved" title="Dashboard Resueltas">
-              <IconCircleCheck stroke={2} className="resolved-icon" />
-              <span>Resueltas</span>
-            </button>
-          </div>
-        </div>
       )}
 
-      <div className="main-content">
+      {onStatisticsClick && (
+        // --- 1. LA NUEVA BARRA LATERAL ---
+        <aside className="shortcuts-sidebar">
+          <header className="sidebar-header">
+            {isSidebarOpen && <h3 className="sidebar-title">Accesos Directos</h3>}
+            {/* El botón de toggle en desktop se mantiene para colapsar/expandir */}
+            <button onClick={toggleSidebar} className="sidebar-toggle-button">
+              {isSidebarOpen ? <IconLayoutSidebarLeftCollapse /> : <IconLayoutSidebarLeftExpand />}
+            </button>
+          </header>
+          <div className="dashboard-shortcuts">
+            {/* Se añade la función toggleMobileMenu para cerrar al hacer clic en móvil */}
+            <button onClick={() => { onStatisticsClick(StatusType.created); if (window.innerWidth <= 992) toggleSidebar(); }} className="shortcut-button shortcut-created" title="Dashboard Creadas">
+              <IconMessageReport stroke={2} className="created-icon" />
+              {isSidebarOpen && <span>Sin atender</span>}
+            </button>
+            <button onClick={() => { onStatisticsClick(StatusType.in_progress); if (window.innerWidth <= 992) toggleSidebar(); }} className="shortcut-button shortcut-in-progress" title="Dashboard En Progreso">
+              <IconLoader2 stroke={2} className="in-progress-icon" />
+              {isSidebarOpen && <span>En Progreso</span>}
+            </button>
+            <button onClick={() => { onStatisticsClick(StatusType.resolved); if (window.innerWidth <= 992) toggleSidebar(); }} className="shortcut-button shortcut-resolved" title="Dashboard Resueltas">
+              <IconCircleCheck stroke={2} className="resolved-icon" />
+              {isSidebarOpen && <span>Resueltas</span>}
+            </button>
+          </div>
+        </aside>
+      )}
+
+      <main className="main-content">
         <div className="kpi-container">
-          <div className="kpi-card">
+          <div className="dashboard-card kpi-card">
             <h2>Total Incidencias</h2>
             <p>{incidencias.length}</p>
           </div>
-          <div className={`kpi-card ${getKpiClass(openIncidences, 'openIncidences')}`}> {/* <-- Clase dinámica */}
+          <div className={`dashboard-card kpi-card ${getKpiClass(openIncidences, 'openIncidences')}`}>
             <h2>Incidencias Abiertas</h2>
             <p>{openIncidences}</p>
           </div>
-          <div className="kpi-card">
+          <div className="dashboard-card kpi-card">
             <h2>Creadas Hoy</h2>
             <p>{incidencesCreatedToday}</p>
-            {/* Indicador de Tendencia */}
             {incidencesCreatedToday > avgCreatedLast7Days && (
               <span className="kpi-trend kpi-trend-up">
                 <IconArrowUp size={16} /> Mayor que promedio
@@ -124,15 +143,14 @@ const GeneralDashboardPage: React.FC<Props> = ({ incidencias, onStatisticsClick 
               </span>
             )}
           </div>
-          <div className={`kpi-card ${getKpiClass(averageResolutionTime, 'avgResolutionTime')}`}> {/* <-- Clase dinámica */}
+          <div className={`dashboard-card kpi-card ${getKpiClass(averageResolutionTime, 'avgResolutionTime')}`}>
             <h2>Tiempo Promedio de Resolución</h2>
-            <p>{averageResolutionTime}h</p> 
-            
+            <p>{averageResolutionTime}h</p>
           </div>
         </div>
 
         <div className="charts-container">
-          <div className="chart-card">
+          <div className="dashboard-card chart-card">
             <h3>Incidencias por Tipo</h3>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
@@ -145,11 +163,11 @@ const GeneralDashboardPage: React.FC<Props> = ({ incidencias, onStatisticsClick 
                   fill="#8884d8"
                   dataKey="value"
                   nameKey="name"
-label={({ name, percent }) => (percent ? `${name} ${((percent as number) * 100).toFixed(0)}%` : name)}
+                  label={({ name, percent }) => (percent ? `${name} ${((percent as number) * 100).toFixed(0)}%` : name)}
                 >
-                 {byType.map((_, index) => ( 
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-          ))}
+                 {byType.map((_, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
                 </Pie>
                 <Tooltip />
                 <Legend />
@@ -157,7 +175,7 @@ label={({ name, percent }) => (percent ? `${name} ${((percent as number) * 100).
             </ResponsiveContainer>
           </div>
 
-          <div className="chart-card">
+          <div className="dashboard-card chart-card">
             <h3>Incidencias por Estado</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={byStatus}>
@@ -171,7 +189,7 @@ label={({ name, percent }) => (percent ? `${name} ${((percent as number) * 100).
             </ResponsiveContainer>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

@@ -35,7 +35,7 @@ function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth(); // Obtenemos el usuario completo desde el contexto
-  const marginTop = location.pathname === '/' ? '60px' : '80px';
+  const marginTop = '60px'; // Unificado para consistencia global y alinear con el header en scroll
   const showHeader = location.pathname !== '/login';
 
   const assignees = useMemo(() => {

@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect, useRef } from 'react';
-import { IconUserCircle, IconLogout } from '@tabler/icons-react';
+import { IconUser, IconLogout } from '@tabler/icons-react';
 import { useAuth } from '../../context/AuthContext';
 import './UserProfileDropdown.css';
 
@@ -32,11 +33,16 @@ export const UserProfileDropdown = () => {
 
   return (
     <div className="user-profile-dropdown" ref={dropdownRef}>
-      <IconUserCircle
-        stroke={2}
-        className="user-profile-icon"
-        onClick={toggleDropdown}
-      />
+      {/* --- INICIO DEL CAMBIO --- */}
+
+      {/* 2. Envolvemos el nuevo icono en un botón con la clase del efecto */}
+      <button className="glass-icon-button" onClick={toggleDropdown}>
+        {/* 3. Usamos IconUser como pediste */}
+        <IconUser stroke={2} size={24} />
+      </button>
+
+      {/* --- FIN DEL CAMBIO --- */}
+      
       {isOpen && (
         <div className="dropdown-menu">
           <div className="dropdown-header">

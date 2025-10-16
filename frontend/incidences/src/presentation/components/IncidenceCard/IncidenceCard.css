@@ -1,23 +1,24 @@
 .incidencia-card {
-  position: relative; /* Para que z-index funcione */
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
+  position: relative;
   padding: 1rem;
   margin-bottom: 1rem;
   text-align: left;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  /* NEW: Add a transparent outline for a smooth transition effect */
+  overflow-wrap: break-word;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, outline-color 0.3s ease;
   outline: 2px solid transparent;
   outline-offset: 4px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease, outline-color 0.3s ease, background-color 0.3s ease;
-  overflow-wrap: break-word; /* Asegura que el texto largo se ajuste */
-  /* Removed overflow: hidden; */
 }
 
 .incidencia-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  background-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .incidencia-card h3 {
@@ -27,6 +28,10 @@
   margin-bottom: 0.5rem;
   color: var(--color-text);
 }
+.incidencia-card:active {
+  cursor: grabbing; /* O 'grab' si aún no se mueve */
+}
+
 
 .incidencia-card p {
   font-size: 0.9rem;
@@ -91,13 +96,12 @@
   margin: 0;
 }
 
-/* Styles for the card being dragged */
 .incidencia-card.dragging {
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75);
   transform: scale(1.05) rotate(3deg);
   z-index: 2000;
-  /* NEW: Use a distinct outline instead of a glow */
   outline-color: #fff;
+  cursor: grabbing; 
 }
 
 .header-right-content {

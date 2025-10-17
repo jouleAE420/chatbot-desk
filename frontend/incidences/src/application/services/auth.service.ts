@@ -1,3 +1,4 @@
+import { mockUsers } from '../../infrastructure/mock-data';
 
 interface LoginCredentials {
   email?: string;
@@ -12,12 +13,8 @@ const AUTH_API_URL = `${API_BASE_URL}/auth`;
 const USE_MOCK_LOGIN = import.meta.env.VITE_USE_MOCK_LOGIN === 'true';
 
 const mockLogin = async (credentials: LoginCredentials) => {
-  // Puedes personalizar los usuarios simulados aquí
-  const users = [
-    { username: 'admin', email: 'admin@example.com', password: 'Admin1234', role: 'admin' },
-    { username: 'supervisor', email: 'supervisor@example.com', password: 'Super123', role: 'supervisor' },
-    { username: 'operador', email: 'operador@example.com', password: 'Operador12345', role: 'operador' },
-  ];
+  // Using centralized mock data
+  const users = mockUsers;
   const user = users.find(
     u => u.email === credentials.email && u.password === credentials.password
   );
@@ -28,7 +25,7 @@ const mockLogin = async (credentials: LoginCredentials) => {
   return {
     token: 'mock-token',
     user: {
-      id: 'mock-id',
+      id: user.id,
       username: user.username,
       email: user.email,
       role: user.role,

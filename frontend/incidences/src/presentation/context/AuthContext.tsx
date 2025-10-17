@@ -1,8 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { login as loginService } from '../../application/services/auth.service';
 import { useNavigate } from 'react-router-dom';
-// esta interfaz puede ser ajustada según los datos reales del usuario
-// obtenidos del backend
+
 interface User {
   id: string;
   username: string;
@@ -12,6 +11,7 @@ interface User {
 
 interface AuthContextType {
   isAuthenticated: boolean;
+  loading: boolean;
   user: User | null;
   login: (credentials: any) => Promise<void>;
   logout: () => void;
@@ -21,20 +21,23 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check for token in localStorage on initial load
     const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
+
     if (token && userData) {
       try {
         setUser(JSON.parse(userData));
       } catch (error) {
-        console.error("Failed to parse user data from localStorage", error);
+        console.error("AuthContext: Failed to parse user data from localStorage.", error);
         localStorage.clear();
       }
     }
+    setLoading(false);
   }, []);
 
   const login = async (credentials: any) => {
@@ -73,6 +76,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     user,
     login,
     logout,
+    loading
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

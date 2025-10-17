@@ -17,6 +17,7 @@ import {
   IconArrowUp,
   IconArrowDown,
   IconMinus,
+  IconX,
   // --- ICONOS DE SIDEBAR ---
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarLeftExpand,
@@ -75,16 +76,7 @@ const GeneralDashboardPage: React.FC<Props> = ({ incidencias, onStatisticsClick 
   return (
     <div className={`general-dashboard ${isSidebarOpen ? 'sidebar-open' : 'sidebar-collapsed'}`}>
      
-      {onStatisticsClick && (
-          // --- BOTÓN FLOTANTE PARA MÓVIL (NUEVO) ---
-          <button 
-              onClick={toggleSidebar} 
-              className="mobile-sidebar-button" 
-              title="Abrir Menú de Dashboards"
-          >
-              <IconMenu2 size={28} />
-          </button>
-      )}
+      {/* Botón flotante eliminado */}
 
       {onStatisticsClick && (
         // --- 1. LA NUEVA BARRA LATERAL ---

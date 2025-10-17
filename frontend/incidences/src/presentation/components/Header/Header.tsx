@@ -31,7 +31,6 @@ interface HeaderProps {
   onFilterButtonClick: (status: StatusType | 'all') => void;
   onSortChange: (status: StatusType | 'all', sortOrder: 'asc' | 'desc') => void;
   onApplyFilter: (status: StatusType | 'all', filters: any) => void;
-  onStatisticsClick?: (status: StatusType | 'all') => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -39,7 +38,6 @@ const Header: React.FC<HeaderProps> = ({
   onFilterButtonClick,
   onSortChange,
   onApplyFilter,
-  onStatisticsClick,
 }) => {
   const location = useLocation();
   const { user, logout } = useAuth();
@@ -74,7 +72,7 @@ const Header: React.FC<HeaderProps> = ({
   // SE ELIMINA LA CLASE MOBILE-MENU-OPEN DEL HEADER
   return (
     <header className="app-header scrolled">
-      <div className="header-left">
+     <div className="header-left">
         <img src="/accesblanco.png" alt="B2Park Logo" className="header-logo" />
         <nav className="main-nav">
           {/* ELIMINADO: Botón de menú hamburguesa del header */}
@@ -98,25 +96,7 @@ const Header: React.FC<HeaderProps> = ({
             )}
           </div>
 
-          {/* ELIMINADO: ACCESOS DIRECTOS PARA EL MENÚ MÓVIL (Están ahora en la Sidebar) */}
-          {/* <div className="mobile-shortcuts">
-            {onStatisticsClick && (
-              <>
-                <button onClick={() => { onStatisticsClick(StatusType.created); toggleMobileMenu(); }} className="shortcut-button shortcut-created">
-                  <IconMessageReport stroke={2} />
-                  <span>Sin atender</span>
-                </button>
-                <button onClick={() => { onStatisticsClick(StatusType.in_progress); toggleMobileMenu(); }} className="shortcut-button shortcut-in-progress">
-                  <IconLoader2 stroke={2} />
-                  <span>En Progreso</span>
-                </button>
-                <button onClick={() => { onStatisticsClick(StatusType.resolved); toggleMobileMenu(); }} className="shortcut-button shortcut-resolved">
-                  <IconCircleCheck stroke={2} />
-                  <span>Resueltas</span>
-                </button>
-              </>
-            )}
-          </div> */}
+         
         </nav>
       </div>
       <div className="header-right">

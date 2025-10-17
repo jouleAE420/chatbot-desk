@@ -48,7 +48,7 @@ const seedDatabase = async (db) => {
 
   if (count === 0) {
     console.log('No hay incidencias, creando datos de prueba...');
-    const locations = ['zitacuaro', 'x', 'y', 'z', 'plaza bella', 'suburbia_mrl', 'dorada'];
+    const locations = ['zitacuaro', 'naucalpan',  'plaza bella', 'suburbia_mrl', 'dorada'];
     const ticketTypes = ['COMPLAINT', 'SUGGESTION', 'OTHER'];
     const statuses = ['CREATED', 'PENDING', 'IN_PROGRESS', 'RESOLVED'];
     const incidents = [];

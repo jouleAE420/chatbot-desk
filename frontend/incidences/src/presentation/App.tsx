@@ -135,8 +135,7 @@ function App() {
           onFilterButtonClick={handleFilterButtonClick}
           onSortChange={handleSortChange}
           onApplyFilter={handleApplyFilter}
-          // Pasamos la función solo si el usuario tiene permisos
-          onStatisticsClick={canViewDashboards ? handleOpenStatisticsModal : undefined}
+          
         />
       )}
       <main style={{ marginTop: showHeader ? marginTop : '0' }}>

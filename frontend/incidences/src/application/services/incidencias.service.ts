@@ -1,7 +1,13 @@
+
 import type { TicketOptions } from '../../domain/models/incidencia';
 import { StatusType } from '../../domain/models/incidencia';
+import { mockIncidences } from '../../infrastructure/mock-data';
 
 const API_URL = 'http://localhost:3000/api/incidencias';
+
+// --- MOCK API SWITCH ---
+// Set VITE_USE_MOCK_API=true in your .env file to use mock data
+const USE_MOCK_API = import.meta.env.VITE_USE_MOCK_API === 'true';
 
 // Helper function to get headers with auth token
 const getAuthHeaders = () => {
@@ -12,14 +18,59 @@ const getAuthHeaders = () => {
   };
 };
 
-export const getAllIncidencias = async (page: number, limit: number): Promise<TicketOptions[]> => {
+// --- MOCK IMPLEMENTATIONS ---
+
+// A mutable copy for mock updates
+let mutableMockIncidences = [...mockIncidences];
+
+const getAllIncidenciasMock = async (page: number, limit: number): Promise<TicketOptions[]> => {
+  console.log(`--- USING MOCK API: getAllIncidencias (page: ${page}, limit: ${limit}) ---`);
+  // Simulate network delay
+  await new Promise(resolve => setTimeout(resolve, 500));
+
+  // Lógica de paginación
+  const start = (page - 1) * limit;
+  const end = start + limit;
+  const paginatedIncidences = mutableMockIncidences.slice(start, end);
+
+  return Promise.resolve(paginatedIncidences);
+};
+
+const updateIncidenciaStatusMock = async (id: number, status: StatusType, assignedTo?: string): Promise<TicketOptions> => {
+  console.log('--- USING MOCK API: updateIncidenciaStatus ---');
+  // Simulate network delay
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
+  const incidenceIndex = mutableMockIncidences.findIndex(inc => inc.id === id);
+  if (incidenceIndex === -1) {
+    throw new Error('Mock Incidence not found');
+  }
+
+  const updatedIncidence = {
+    ...mutableMockIncidences[incidenceIndex],
+    status,
+    assignedTo: assignedTo ?? mutableMockIncidences[incidenceIndex].assignedTo,
+    resolvedAt: status === StatusType.resolved ? Date.now() : null,
+  };
+
+  mutableMockIncidences[incidenceIndex] = updatedIncidence;
+  return Promise.resolve(updatedIncidence);
+};
+
+
+// --- REAL IMPLEMENTATIONS ---
+
+const getAllIncidenciasReal = async (page: number, limit: number): Promise<TicketOptions[]> => {
   const response = await fetch(`${API_URL}?page=${page}&limit=${limit}`, {
     headers: getAuthHeaders(),
   });
-
   if (!response.ok) {
     if (response.status === 401) {
-      console.error("Unauthorized access. Token might be invalid or expired.");
+      console.error("Unauthorized access. Token might be invalid or expired. Logging out.");
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+      throw new Error("Session expired. Please log in again.");
     }
     const message = `Failed to fetch incidencias: ${response.status}`;
     throw new Error(message);
@@ -32,14 +83,27 @@ export const getAllIncidencias = async (page: number, limit: number): Promise<Ti
   return data;
 };
 
-export const updateIncidenciaStatus = async (id: number, status: StatusType, assignedTo?: string): Promise<TicketOptions> => {
+const updateIncidenciaStatusReal = async (id: number, status: StatusType, assignedTo?: string): Promise<TicketOptions> => {
   const response = await fetch(`${API_URL}/${id}/status`, {
     method: 'PUT',
     headers: getAuthHeaders(),
     body: JSON.stringify({ status, assignedTo }),
   });
   if (!response.ok) {
+    if (response.status === 401) {
+      console.error("Unauthorized access. Token might be invalid or expired. Logging out.");
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+      throw new Error("Session expired. Please log in again.");
+    }
     throw new Error('Failed to update incidencia status');
   }
   return response.json();
 };
+
+// --- EXPORTED FUNCTIONS ---
+// These functions will use either the mock or real implementation based on the USE_MOCK_API flag.
+
+export const getAllIncidencias = USE_MOCK_API ? getAllIncidenciasMock : getAllIncidenciasReal;
+export const updateIncidenciaStatus = USE_MOCK_API ? updateIncidenciaStatusMock : updateIncidenciaStatusReal;

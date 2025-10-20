@@ -21,8 +21,6 @@ import {
   // --- ICONOS DE SIDEBAR ---
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarLeftExpand,
-  // --- NUEVO ICONO DE MENÚ HAMBURGUESA ---
-  IconMenu2, 
 } from '@tabler/icons-react';
 import './GeneralDashboardPage.css';
 
@@ -44,7 +42,7 @@ const GeneralDashboardPage: React.FC<Props> = ({ incidencias, onStatisticsClick 
     warning: 48,
   };
 
-  // Por defecto, la barra estará abierta en escritorio.
+  // Por defecto, la barra estará cerrada
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const byStatus = useMemo(() => calculateIncidencesByStatus(incidencias), [incidencias]);
@@ -76,10 +74,21 @@ const GeneralDashboardPage: React.FC<Props> = ({ incidencias, onStatisticsClick 
   return (
     <div className={`general-dashboard ${isSidebarOpen ? 'sidebar-open' : 'sidebar-collapsed'}`}>
      
-      {/* Botón flotante eliminado */}
+      {/* Botón móvil con animación hamburguesa → X */}
+      <button 
+        className={`mobile-sidebar-button ${isSidebarOpen ? 'open' : ''}`}
+        onClick={toggleSidebar}
+        aria-label={isSidebarOpen ? 'Cerrar menú' : 'Abrir menú'}
+      >
+        <div className="hamburger-icon">
+          <span className="line line-1"></span>
+          <span className="line line-2"></span>
+          <span className="line line-3"></span>
+        </div>
+      </button>
 
       {onStatisticsClick && (
-        // --- 1. LA NUEVA BARRA LATERAL ---
+        // --- BARRA LATERAL ---
         <aside className="shortcuts-sidebar">
           <header className="sidebar-header">
             {isSidebarOpen && <h3 className="sidebar-title">Accesos Directos</h3>}
@@ -89,7 +98,7 @@ const GeneralDashboardPage: React.FC<Props> = ({ incidencias, onStatisticsClick 
             </button>
           </header>
           <div className="dashboard-shortcuts">
-            {/* Se añade la función toggleMobileMenu para cerrar al hacer clic en móvil */}
+            {/* Se añade la función toggleSidebar para cerrar al hacer clic en móvil */}
             <button onClick={() => { onStatisticsClick(StatusType.created); if (window.innerWidth <= 992) toggleSidebar(); }} className="shortcut-button shortcut-created" title="Dashboard Creadas">
               <IconMessageReport stroke={2} className="created-icon" />
               {isSidebarOpen && <span>Sin atender</span>}

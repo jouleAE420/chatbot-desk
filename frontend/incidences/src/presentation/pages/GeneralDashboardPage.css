@@ -38,6 +38,60 @@
     display: none; /* OCULTAR EN DESKTOP por defecto */
 }
 
+/* Contenedor del ícono hamburguesa */
+.hamburger-icon {
+  width: 24px;
+  height: 18px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Líneas del ícono */
+.hamburger-icon .line {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: white;
+  border-radius: 2px;
+  transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+  transform-origin: center;
+}
+
+/* Estado normal (hamburguesa) */
+.line-1 { transform: translateY(0) rotate(0); }
+.line-2 { opacity: 1; }
+.line-3 { transform: translateY(0) rotate(0); }
+
+/* Estado abierto (X) */
+.mobile-sidebar-button.open .line-1 {
+  transform: translateY(8px) rotate(45deg);
+}
+
+.mobile-sidebar-button.open .line-2 {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+
+.mobile-sidebar-button.open .line-3 {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+/* Animación de pulso cuando está abierto */
+.mobile-sidebar-button.open {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
+  }
+}
+
 /* ============================================
    BARRA LATERAL (SIDEBAR) - ESTILOS BASE (DESKTOP)
    ============================================ */
@@ -80,7 +134,7 @@
 }
 
 /* ============================================
-   HEADER DE LA SIDEBAR (sin cambios)
+   HEADER DE LA SIDEBAR
    ============================================ */
 .sidebar-header {
   display: flex;
@@ -133,7 +187,7 @@
 }
 
 /* ============================================
-   ACCESOS DIRECTOS (sin cambios)
+   ACCESOS DIRECTOS
    ============================================ */
 .dashboard-shortcuts {
   display: flex;
@@ -213,7 +267,7 @@
 }
 
 /* ============================================
-   CONTENIDO PRINCIPAL (sin cambios)
+   CONTENIDO PRINCIPAL
    ============================================ */
 .main-content {
   display: flex;
@@ -225,7 +279,7 @@
 }
 
 /* ============================================
-   CARDS Y GRÁFICOS (sin cambios)
+   CARDS Y GRÁFICOS
    ============================================ */
 .dashboard-card {
   padding: 1.5rem;
@@ -330,7 +384,7 @@
 }
 
 /* ============================================
-   RECHARTS STYLES (sin cambios)
+   RECHARTS STYLES
    ============================================ */
 .recharts-text,
 .recharts-legend-item-text {
@@ -349,7 +403,7 @@
 }
 
 /* ============================================
-   ANIMACIONES (sin cambios)
+   ANIMACIONES
    ============================================ */
 @keyframes aurora-flow {
   from {

@@ -6,6 +6,7 @@ import type { ColumnState } from '../../App.tsx';
 import { StatusType } from '../../../domain/models/incidencia';
 import { useAuth } from '../../context/AuthContext';
 import {
+  IconSettings,
   IconUserPlus,
   IconLogout,
   IconMenu2, // Se mantiene si se usa en desktop para el menú
@@ -17,6 +18,7 @@ import {
 import ViewSwitcher from '../ViewSwitcher/ViewSwitcher';
 import { UserProfileDropdown } from '../UserProfileDropdown/UserProfileDropdown.tsx';
 import AddUserModal from '../AddUserModal/AddUserModal';
+import { Drawer } from '../Drawer/Drawer';
 import { register } from '../../../application/services/auth.service';
 
 const statusKeyMap: { [key: string]: StatusType } = {
@@ -42,6 +44,7 @@ const Header: React.FC<HeaderProps> = ({
   const location = useLocation();
   const { user, logout } = useAuth();
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false); 
   // const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // ELIMINADO
 
   const canViewDashboards = user?.role === 'admin' || user?.role === 'supervisor';
@@ -69,18 +72,13 @@ const Header: React.FC<HeaderProps> = ({
   //   setIsMobileMenuOpen(!isMobileMenuOpen);
   // };
 
-  // SE ELIMINA LA CLASE MOBILE-MENU-OPEN DEL HEADER
   return (
     <header className="app-header scrolled">
      <div className="header-left">
         <img src="/accesblanco.png" alt="B2Park Logo" className="header-logo" />
         <nav className="main-nav">
-          {/* ELIMINADO: Botón de menú hamburguesa del header */}
-          {/* <button className="mobile-menu-button" onClick={toggleMobileMenu}>
-            {isMobileMenuOpen ? <IconX /> : <IconMenu2 />}
-          </button> */}
+ 
 
-          {/* --- ACCIONES DEL HEADER PARA ESCRITORIO --- */}
           <div className="header-actions">
             {canViewDashboards && (
               <ViewSwitcher isKanbanView={isKanbanView} isDashboardView={isDashboardView} />
@@ -99,19 +97,11 @@ const Header: React.FC<HeaderProps> = ({
          
         </nav>
       </div>
-      <div className="header-right">
+         <div className="header-right">
         <div className="user-session">
-          {user && user.role === 'admin' && (
-            <button className="glass-icon-button" title="Agregar Usuario" onClick={() => setIsAddUserModalOpen(true)}>
-              <IconUserPlus stroke={2} size={24} />
-            </button>
-          )}
-          <UserProfileDropdown />
-          {user && (
-            <button onClick={logout} className="glass-icon-button" title="Cerrar Sesión">
-              <IconLogout size={24} />
-            </button>
-          )}
+          <button className="glass-icon-button" title="Opciones" onClick={() => setIsDrawerOpen(true)}>
+            <IconSettings stroke={2} size={24} />
+          </button>
         </div>
       </div>
 
@@ -119,6 +109,12 @@ const Header: React.FC<HeaderProps> = ({
         isOpen={isAddUserModalOpen}
         onClose={() => setIsAddUserModalOpen(false)}
         onAddUser={handleAddUser}
+      />
+
+      <Drawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        onOpenAddUserModal={() => setIsAddUserModalOpen(true)}
       />
     </header>
   );

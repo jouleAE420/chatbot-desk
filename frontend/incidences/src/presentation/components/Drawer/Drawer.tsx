@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './Drawer.css';
 import { useAuth } from '../../context/AuthContext';
 import { UserProfileDropdown } from '../UserProfileDropdown/UserProfileDropdown';
@@ -12,20 +12,41 @@ interface DrawerProps {
 
 export const Drawer: React.FC<DrawerProps> = ({ isOpen, onClose, onOpenAddUserModal }) => {
   const { user, logout } = useAuth();
+  const [isMounted, setIsMounted] = useState(isOpen);
+  const [isAnimating, setIsAnimating] = useState(isOpen);
+
+  useEffect(() => {
+    if (isOpen) {
+      setIsMounted(true);
+     
+      const timer = setTimeout(() => {
+        setIsAnimating(true);
+      }, 10); 
+
+      return () => clearTimeout(timer);
+    } else {
+      setIsAnimating(false);
+      const timer = setTimeout(() => {
+        setIsMounted(false);
+      }, 400); 
+
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
 
   const handleAddUserClick = () => {
     onOpenAddUserModal();
-    onClose(); // Cierra el drawer al abrir el modal
+    onClose(); 
   };
 
-  if (!isOpen) {
+  if (!isMounted) {
     return null;
   }
 
   return (
     <>
-      <div className={`drawer-backdrop ${isOpen ? 'open' : ''}`} onClick={onClose} />
-      <div className={`drawer ${isOpen ? 'open' : ''}`}>
+      <div className={`drawer-backdrop ${isAnimating ? 'open' : ''}`} onClick={onClose} />
+      <div className={`drawer ${isAnimating ? 'open' : ''}`}>
         <div className="drawer-header">
           <button onClick={onClose} className="glass-icon-button">
             <IconX size={24} />

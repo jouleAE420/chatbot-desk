@@ -1,25 +1,94 @@
 .category-toolbar {
-  display: flex;
-  gap: 0.75rem;
+  position: relative;
 }
 
+.toolbar-wrapper {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+/* Botones compartidos */
 .filter-button,
-.sort-button {
+.sort-button,
+.header-icon-button {
   background-color: transparent;
   border: none;
   border-radius: 5px;
   color: var(--color-text);
-  padding: 0;
+  padding: 0.25rem 0.5rem;
   cursor: pointer;
-  transition: all 0.2s ease;
-  width: 20px;
-  height: 20px;
+  transition: background-color 0.2s ease;
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 0.5rem;
+}
+
+.filter-button span,
+.sort-button span,
+.header-icon-button span {
+  display: none;
 }
 
 .filter-button:hover,
-.sort-button:hover {
+.sort-button:hover,
+.header-icon-button:hover {
   background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Botón menú móvil */
+.mobile-menu-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--color-text);
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+/* Contenedor de acciones */
+.toolbar-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .mobile-menu-toggle {
+    display: block;
+  }
+
+  .toolbar-actions {
+    display: none;
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    background-color: #2c2c3e;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    flex-direction: column;
+    padding: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    min-width: 150px;
+  }
+
+  .toolbar-actions.open {
+    display: flex;
+  }
+
+  .toolbar-actions .filter-button,
+  .toolbar-actions .sort-button,
+  .toolbar-actions .header-icon-button {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .toolbar-actions .filter-button span,
+  .toolbar-actions .sort-button span,
+  .toolbar-actions .header-icon-button span {
+    display: inline;
+  }
 }

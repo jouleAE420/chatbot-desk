@@ -3,7 +3,7 @@ import type { TicketOptions } from '../../domain/models/incidencia';
 import { StatusType } from '../../domain/models/incidencia';
 import { mockIncidences } from '../../infrastructure/mock-data';
 
-const API_URL = 'http://localhost:3000/api/incidencias';
+const API_URL = 'http://localhost:3000/api/tickets';
 
 // --- MOCK API SWITCH ---
 // Set VITE_USE_MOCK_API=true in your .env file to use mock data

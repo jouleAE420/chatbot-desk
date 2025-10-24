@@ -1,13 +1,12 @@
 .view-switcher-container {
   display: flex;
   position: relative;
-  background: rgba(35, 35, 50, 0.5); /* Fondo semi-transparente */
+  background: rgba(35, 35, 50, 0.5);
   border-radius: 30px;
   padding: 4px;
   width: fit-content;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px); /* Efecto glass */
-  -webkit-backdrop-filter: blur(10px); /* Para Safari */
+  backdrop-filter: blur(10px);
 }
 
 .switch-option {
@@ -15,10 +14,16 @@
   padding: 8px 20px;
   z-index: 1;
   cursor: pointer;
-  transition: color 0.3s ease-in-out;
+  transition: color 0.3s ease;
   display: flex;
   align-items: center;
-  text-decoration: none; /* Asegurarse de que no haya subrayado */
+  justify-content: center;
+  text-decoration: none;
+  border-radius: 30px;
+}
+
+.switch-option:hover {
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .switch-option.active {
@@ -31,11 +36,18 @@
   left: 4px;
   width: calc(50% - 4px);
   height: calc(100% - 8px);
-  background: rgba(255, 255, 255, 0.15); /* Fondo ligeramente más claro para el highlight */
+  background: var(--filter-apply-bg, rgba(108, 99, 255, 0.3));
   border-radius: 30px;
   transition: transform 0.3s cubic-bezier(0.65, 0, 0.35, 1);
+  pointer-events: none;
 }
 
 .view-switcher-container[data-active-view="dashboard"] .switch-highlight {
   transform: translateX(100%);
+}
+
+@media (max-width: 768px) {
+  .switch-option {
+    padding: 8px 16px;
+  }
 }

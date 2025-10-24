@@ -179,7 +179,10 @@
 @media (max-width: 992px) {
   /* Ocultamos las acciones del header en la barra superior móvil */
   .main-nav .header-actions {
-    display: none;
+    display: flex; /* Mostrar el ViewSwitcher en pantallas pequeñas */
+    flex-direction: row; /* Ajustar la dirección para que los elementos se apilen */
+    align-items: center; /* Centrar los elementos */
+    gap: 1rem; /* Espacio entre los elementos */
   }
 
   /* Mostramos el botón de hamburguesa */

@@ -14,7 +14,7 @@ export class TicketRepositoryImpl implements TicketRepository {
     updateTicket(ticketId: string, updateTicketDto: UpdateTicketDto): Promise<TicketEntity> {
         return this.ticketDatasource.updateTicket(ticketId, updateTicketDto);
     }
-    getAll(): Promise<TicketEntity[]> {
-        return this.ticketDatasource.getAll();
-    }
+  getAll(page: number, limit: number): Promise<TicketEntity[]> {
+    return this.ticketDatasource.getAll(page, limit);
+}
 }

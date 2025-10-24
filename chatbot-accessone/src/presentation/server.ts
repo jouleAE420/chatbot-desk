@@ -5,7 +5,7 @@ import express, { Router } from "express";
 import path from "path";
 import { ParkingRepositoryImpl } from "../infrastructure/repositories/";
 import { MongoParkingDatasource } from "../infrastructure/datasources/";
-
+import cors from "cors";
 interface ServerOptions {
     port: number;
     publicPath?: string;
@@ -30,9 +30,10 @@ export class Server {
 
         console.log("SERVER STARTED...");
 
-        WhatsappBot.startBotServer(envs.PORT_BOT);
+        //WhatsappBot.startBotServer(envs.PORT_BOT);
 
         //*MIDDLEWARES
+        this .app.use(cors());
         this.app.use(express.json());
         this.app.use(express.urlencoded({ extended: true }));
 

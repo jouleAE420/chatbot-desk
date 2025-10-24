@@ -20,8 +20,13 @@ export class TicketParkingDatasourceMongo implements TicketDatasource {
         if (!ticket) throw new Error("Ticket not found");
         return TicketEntity.fromObject(ticket);
     }
-    getAll(): Promise<TicketEntity[]> {
-        throw new Error("Method not implemented.");
-    }
+ async getAll(page: number, limit: number): Promise<TicketEntity[]> {
+    const skip = (page - 1) * limit;
+    const tickets = await TicketModel.find()
+        .skip(skip)
+        .limit(limit)
+        .exec();
+    return tickets.map(ticket => TicketEntity.fromObject(ticket));
+}
 
 }

@@ -8,5 +8,5 @@ export abstract class TicketDatasource {
         ticketId: string,
         updateTicketDto: UpdateTicketDto
     ): Promise<TicketEntity>;
-    abstract getAll(): Promise<TicketEntity[]>;
+abstract getAll(page: number, limit: number): Promise<TicketEntity[]>;
 }

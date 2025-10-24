@@ -25,99 +25,134 @@ const IncidenceCardBase: React.FC<Props> = ({ incidencia, isDragging = false, on
   const [assignModalMode, setAssignModalMode] = useState<'add' | 'view' | 'edit' | 'delete'>('add');
 
   const isSupervisor = user?.role === 'supervisor';
-
+  const isAdmin = user?.role === 'admin';
+  const isOperator = user?.role === 'operador';
+  
   const isResolved = incidencia.status === StatusType.resolved;
-  // isRated es true solo si está Resuelta Y el rate es un número positivo.
   const isRated = isResolved && typeof incidencia.rate === 'number' && incidencia.rate > 0;
 
- const handleReleaseIncidence = () => {
+  // Simplificado: Función de release
+  const handleReleaseIncidence = () => {
     if (onUpdateStatus && !isSupervisor) {
       onUpdateStatus(incidencia.id, StatusType.created, undefined);
     }
     setIsAssigneeInfoModalOpen(false);
   };
-const handleStatusUpdate = (newStatus: StatusType) => {
+
+  // Simplificado: Update de status
+  const handleStatusUpdate = (newStatus: StatusType) => {
     if (!onUpdateStatus) return;
 
-    const isAssigningFromCreated = 
+    const shouldAutoAssign = 
       incidencia.status === StatusType.created &&
       (newStatus === StatusType.pending || newStatus === StatusType.in_progress) &&
       !incidencia.assignedTo &&
-      user?.role === 'operador';
+      isOperator;
 
-    if (isAssigningFromCreated) {
-        // Auto-asigna al usuario actual sin pedir confirmación en este contexto
-        onUpdateStatus(incidencia.id, newStatus, user.id);
-    } else {
-        // En cualquier otro caso, mantiene el asignado actual o lo deja como está
-        onUpdateStatus(incidencia.id, newStatus, incidencia.assignedTo);
+    onUpdateStatus(
+      incidencia.id, 
+      newStatus, 
+      shouldAutoAssign ? user?.id : incidencia.assignedTo
+    );
+  };
+
+  // Simplificado: Manejo del click en assignee
+  const handleAssigneeClick = (e: React.MouseEvent) => {
+    if (isSupervisor) return;
+    e.stopPropagation();
+
+    if (isAdmin) {
+      setAssignModalMode(incidencia.assignedTo ? 'view' : 'add');
+      setIsAssignModalOpen(true);
+    } else if (incidencia.assignedTo) {
+      setIsAssigneeInfoModalOpen(true);
     }
   };
 
+  // Simplificado: Acción del AssignModal
+  const handleAssignModalAction = (action: string, value?: string) => {
+    if (!onUpdateStatus) return;
+
+    if (action === 'delete') {
+      onUpdateStatus(incidencia.id, incidencia.status, undefined);
+    } else if (value) {
+      onUpdateStatus(incidencia.id, incidencia.status, value);
+    }
+    setIsAssignModalOpen(false);
+  };
+
+  // Render del rating o placeholder
+  const renderRatingSection = () => {
+    if (isRated) {
+      return <StarRating rating={incidencia.rate as number} />;
+    }
+    if (isResolved) {
+      return (
+        <span className="rating-pending">
+          Calificación Pendiente
+        </span>
+      );
+    }
+    return <span style={{ minWidth: '80px' }} />;
+  };
+
   return (
-    <div className={`incidencia-card ${incidencia.status} ${isDragging ? 'dragging' : ''} ${isSupervisor ? 'read-only' : ''}`}>
-      <div className="card-header">
-        <h3>{incidencia.parkingId}</h3>
-        <div className="header-right-content">
-          <span className="ticket-type">{incidencia.ticketType}</span>
-        </div>
-      </div>
-
-      {onUpdateStatus && width && width < 769 && !isSupervisor && (
-        <div onClick={(e) => e.stopPropagation()}>
-         <StatusActionButtons
-            status={incidencia.status}
-            assignedTo={incidencia.assignedTo}
-            onMoveClick={handleStatusUpdate}
-          />
-        </div>
-      )}
-
-      <div className="card-footer">
-        <div className="footer-left">
-         {isRated ? (
-            <StarRating rating={incidencia.rate as number} />
-        )    : isResolved ? (
-            <span className="ratingpending" style={{color: '#f39c12', fontSize: '0.8 rem', fontWeight: '600'}}>
-              Calificación Pendiente</span>
-          ) : (
-
-            <span style={{minWidth: '80px'}}></span>
-          )
-      }
-          <div
-            className="assignee-icon-container"
-            onClick={(e) => {
-              if (isSupervisor) return; 
-              e.stopPropagation();
-              if (user?.role === 'admin') {
-                setAssignModalMode(incidencia.assignedTo ? 'view' : 'add');
-                setIsAssignModalOpen(true);
-                return;
-              }
-              if (incidencia.assignedTo) {
-                setIsAssigneeInfoModalOpen(true);
-              }
-            }}
-          >
-            {incidencia.assignedTo && (
-              <IconUser stroke={2} size={24} className="assignee-icon" title={`Asignado a: ${incidencia.assignedTo}`} />
-            )}
+    <>
+      <div className={`incidencia-card ${incidencia.status} ${isDragging ? 'dragging' : ''} ${isSupervisor ? 'read-only' : ''}`}>
+        {/* Header */}
+        <div className="card-header">
+          <h3>{incidencia.parkingId}</h3>
+          <div className="header-right-content">
+            <span className="ticket-type">{incidencia.ticketType}</span>
           </div>
         </div>
-        <p className="time-ago">Hace {timeAgo(incidencia.createdAt)}</p>
+
+        {/* Status Buttons (Mobile) */}
+        {onUpdateStatus && width && width < 769 && !isSupervisor && (
+          <div onClick={(e) => e.stopPropagation()}>
+            <StatusActionButtons
+              status={incidencia.status}
+              assignedTo={incidencia.assignedTo}
+              onMoveClick={handleStatusUpdate}
+            />
+          </div>
+        )}
+
+        {/* Footer */}
+        <div className="card-footer">
+          <div className="footer-left">
+            {renderRatingSection()}
+            
+            {/* Assignee Icon */}
+            {incidencia.assignedTo && (
+              <div
+                className="assignee-icon-container"
+                onClick={handleAssigneeClick}
+                title={`Asignado a: ${incidencia.assignedTo}`}
+              >
+                <IconUser stroke={2} size={20} />
+              </div>
+            )}
+          </div>
+          
+          <p className="time-ago">Hace {timeAgo(incidencia.createdAt)}</p>
+        </div>
       </div>
 
-      
+      {/* Assignee Info Modal */}
       {isAssigneeInfoModalOpen && createPortal(
         <div className="assignee-info-modal-overlay" onClick={() => setIsAssigneeInfoModalOpen(false)}>
           <div className="assignee-info-modal-content" onClick={(e) => e.stopPropagation()}>
             <h4>Responsable de la Incidencia</h4>
             <p className="assignee-name">{incidencia.assignedTo}</p>
             <div className="modal-actions">
-              <button onClick={() => setIsAssigneeInfoModalOpen(false)} className="button-secondary">Cerrar</button>
+              <button onClick={() => setIsAssigneeInfoModalOpen(false)} className="button-secondary">
+                Cerrar
+              </button>
               {user?.id === incidencia.assignedTo && !isSupervisor && (
-                <button onClick={handleReleaseIncidence} className="button-danger">Liberar</button>
+                <button onClick={handleReleaseIncidence} className="button-danger">
+                  Liberar
+                </button>
               )}
             </div>
           </div>
@@ -125,27 +160,17 @@ const handleStatusUpdate = (newStatus: StatusType) => {
         document.body
       )}
 
-      {/* Assign Modal for admins */}
+      {/* Assign Modal (Admin) */}
       {isAssignModalOpen && (
         <AssignModal
           isOpen={isAssignModalOpen}
           onClose={() => setIsAssignModalOpen(false)}
           mode={assignModalMode}
-          currentAssignee={incidencia.assignedTo || undefined}
-          onAction={(action, value) => {
-            // action: 'add' | 'edit' | 'delete'
-            if (action === 'delete') {
-              // Unassign (send null to make JSON persistence explicit)
-              if (onUpdateStatus) onUpdateStatus(incidencia.id, incidencia.status, null as any);
-            } else if (value) {
-              // Assign or edit: keep same status, only change assignedTo
-              if (onUpdateStatus) onUpdateStatus(incidencia.id, incidencia.status, value);
-            }
-            setIsAssignModalOpen(false);
-          }}
+          currentAssignee={incidencia.assignedTo}
+          onAction={handleAssignModalAction}
         />
       )}
-    </div>
+    </>
   );
 };
 

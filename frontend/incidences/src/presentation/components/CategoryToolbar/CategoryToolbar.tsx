@@ -1,44 +1,99 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react'; 
 import './CategoryToolbar.css';
-import { IconFilterSearch, IconSortAscending, IconSortDescending, IconRestore } from '@tabler/icons-react';
+import { 
+  IconFilterSearch, 
+  IconSortAscending, 
+  IconSortDescending, 
+  IconRestore, 
+  IconDotsVertical 
+} from '@tabler/icons-react';
 
-// Define las props que el componente espera recibir
 interface CategoryToolbarProps {
   onFilterButtonClick: () => void;
   onSortChange: (order: 'asc' | 'desc') => void;
   currentSortOrder: 'asc' | 'desc';
-  areFiltersApplied: boolean; 
-  onClearFilters: () => void; 
+  areFiltersApplied: boolean;
+  onClearFilters: () => void;
 }
-//componente funcional de react
+
 const CategoryToolbar: React.FC<CategoryToolbarProps> = ({
   onFilterButtonClick,
   onSortChange,
   currentSortOrder,
-  areFiltersApplied, 
-  onClearFilters, 
+  areFiltersApplied,
+  onClearFilters,
 }) => {
-  //funcion para alternar el orden de clasificacion, llama a onSortChange con el orden opuesto
-  const toggleSortOrder = () => {
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const toggleSortOrder = useCallback(() => {
     onSortChange(currentSortOrder === 'asc' ? 'desc' : 'asc');
-  };
-//returna el JSX que define la estructura visual del componente
+  }, [currentSortOrder, onSortChange]);
+
+  const closeMobileMenu = useCallback(() => {
+    setMobileMenuOpen(false);
+  }, []);
+
+  const handleFilterClick = useCallback(() => {
+    onFilterButtonClick();
+    closeMobileMenu();
+  }, [onFilterButtonClick, closeMobileMenu]);
+
+  const handleSortClick = useCallback(() => {
+    toggleSortOrder();
+    closeMobileMenu();
+  }, [toggleSortOrder, closeMobileMenu]);
+
+  const handleClearClick = useCallback(() => {
+    onClearFilters();
+    closeMobileMenu();
+  }, [onClearFilters, closeMobileMenu]);
+
   return (
     <div className="category-toolbar">
-      <button onClick={onFilterButtonClick} className="filter-button">
-        <IconFilterSearch stroke={2} />
-      </button>
-      <button onClick={toggleSortOrder} className="sort-button">
-        {currentSortOrder === 'asc' ? <IconSortAscending stroke={2} /> : <IconSortDescending stroke={2} />}
-      </button>
-      {areFiltersApplied && ( 
-        <button 
-          className="header-icon-button" 
-          title="Limpiar filtros"
-          onClick={onClearFilters}>
-          <IconRestore stroke={2} />
+      <div className="toolbar-wrapper">
+        <button
+          className="mobile-menu-toggle"
+          onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label="Abrir menú de opciones"
+          aria-expanded={isMobileMenuOpen}
+        >
+          <IconDotsVertical stroke={2} />
         </button>
-      )}
+
+        <div className={`toolbar-actions ${isMobileMenuOpen ? 'open' : ''}`}>
+          <button 
+            onClick={handleFilterClick} 
+            className="filter-button"
+            aria-label="Filtrar categorías"
+          >
+            <IconFilterSearch stroke={2} />
+            <span>Filtrar</span>
+          </button>
+
+          <button 
+            onClick={handleSortClick} 
+            className="sort-button"
+            aria-label={`Ordenar ${currentSortOrder === 'asc' ? 'descendente' : 'ascendente'}`}
+          >
+            {currentSortOrder === 'asc' ? 
+              <IconSortAscending stroke={2} /> : 
+              <IconSortDescending stroke={2} />
+            }
+            <span>Ordenar</span>
+          </button>
+
+          {areFiltersApplied && (
+            <button
+              className="header-icon-button"
+              onClick={handleClearClick}
+              aria-label="Limpiar filtros aplicados"
+            >
+              <IconRestore stroke={2} />
+              <span>Limpiar</span>
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

@@ -9,9 +9,9 @@ export class TicketService {
         return await this.ticketRepository.getById(ticketId);
     }
 
-    public async getAllTickets() {
-        return await this.ticketRepository.getAll();
-    }
+ public async getAllTickets(page: number, limit: number) {
+    return await this.ticketRepository.getAll(page, limit);
+}
 
     public async createTicket(data: any) {
         data.createdAt = Date.now();

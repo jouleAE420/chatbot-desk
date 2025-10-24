@@ -15,14 +15,21 @@ export class TicketController {
         }
     };
 
-    public getAll: RequestHandler = async (_req: Request, res: Response) => {
-        try {
-            const tickets = await this.ticketService.getAllTickets();
-            return res.json(tickets);
-        } catch (error) {
-            return res.status(400).json({ error: (error as Error).message });
-        }
-    };
+ public getAll: RequestHandler = async (req: Request, res: Response) => {
+    const { page = 1, limit = 10 } = req.query; // Valores por defecto
+
+    if (isNaN(Number(page)) || isNaN(Number(limit))) {
+        return res.status(400).json({ error: 'Page and limit must be valid numbers' });
+    }
+
+    try {
+        const tickets = await this.ticketService.getAllTickets(Number(page), Number(limit));
+        return res.json(tickets);
+    } catch (error) {
+        return res.status(400).json({ error: (error as Error).message });
+    }
+};
+
 
     public createTicket: RequestHandler = async (req: Request, res: Response) => {
         try {

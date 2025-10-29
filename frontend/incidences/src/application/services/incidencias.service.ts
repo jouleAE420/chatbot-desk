@@ -3,7 +3,8 @@ import type { TicketOptions } from '../../domain/models/incidencia';
 import { StatusType } from '../../domain/models/incidencia';
 import { mockIncidences } from '../../infrastructure/mock-data';
 
-const API_URL = 'http://localhost:3000/api/tickets';
+//const API_URL = 'http://localhost:3000/api/tickets';
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/tickets`;
 
 // --- MOCK API SWITCH ---
 // Set VITE_USE_MOCK_API=true in your .env file to use mock data
@@ -36,12 +37,12 @@ const getAllIncidenciasMock = async (page: number, limit: number): Promise<Ticke
   return Promise.resolve(paginatedIncidences);
 };
 
-const updateIncidenciaStatusMock = async (id: number, status: StatusType, assignedTo?: string): Promise<TicketOptions> => {
+const updateIncidenciaStatusMock = async (_id: string, status: StatusType): Promise<TicketOptions> => {
   console.log('--- USING MOCK API: updateIncidenciaStatus ---');
   // Simulate network delay
   await new Promise(resolve => setTimeout(resolve, 500));
   
-  const incidenceIndex = mutableMockIncidences.findIndex(inc => inc.id === id);
+  const incidenceIndex = mutableMockIncidences.findIndex(inc => inc._id === _id);
   if (incidenceIndex === -1) {
     throw new Error('Mock Incidence not found');
   }
@@ -49,7 +50,6 @@ const updateIncidenciaStatusMock = async (id: number, status: StatusType, assign
   const updatedIncidence = {
     ...mutableMockIncidences[incidenceIndex],
     status,
-    assignedTo: assignedTo ?? mutableMockIncidences[incidenceIndex].assignedTo,
     resolvedAt: status === StatusType.resolved ? Date.now() : null,
   };
 
@@ -83,11 +83,11 @@ const getAllIncidenciasReal = async (page: number, limit: number): Promise<Ticke
   return data;
 };
 
-const updateIncidenciaStatusReal = async (id: number, status: StatusType, assignedTo?: string): Promise<TicketOptions> => {
-  const response = await fetch(`${API_URL}/${id}/status`, {
+const updateIncidenciaStatusReal = async (_id: string, status: StatusType): Promise<TicketOptions> => {
+  const response = await fetch(`${API_URL}/${_id}/status`, {
     method: 'PUT',
     headers: getAuthHeaders(),
-    body: JSON.stringify({ status, assignedTo }),
+    body: JSON.stringify({ status }),
   });
   if (!response.ok) {
     if (response.status === 401) {

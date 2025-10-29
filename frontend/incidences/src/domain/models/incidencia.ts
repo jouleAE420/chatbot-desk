@@ -8,14 +8,14 @@ export type TicketType = typeof TicketType[keyof typeof TicketType];
 export const StatusType = {
   created: "CREATED",
   pending: "PENDING",
-  in_progress: "IN_PROGRESS",
+  in_progress: "IN_RPROGRESS",
   resolved: "RESOLVED",
 } as const;
 export type StatusType = typeof StatusType[keyof typeof StatusType];
 
 export interface TicketOptions  {
-  id: number;
-  phoneOrigin: string;
+  _id: string;
+  phoneOrigin: number;
   clientName: string;
   rate: number|null;
   comment: string;
@@ -23,6 +23,6 @@ export interface TicketOptions  {
   parkingId: string;
   createdAt: number;
   status: StatusType;
-  assignedTo?: string; 
+  users?: string[]; 
   resolvedAt?: number | null; 
 }

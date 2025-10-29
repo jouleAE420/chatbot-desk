@@ -39,9 +39,7 @@ function App() {
   const showHeader = location.pathname !== '/login';
 
   const assignees = useMemo(() => {
-    const allAssignees = incidencias
-      .map(inc => inc.assignedTo)
-      .filter((assignee): assignee is string => !!assignee);
+    const allAssignees = incidencias.flatMap(inc => inc.users || []);
     return Array.from(new Set(allAssignees));
   }, [incidencias]);
 
@@ -116,11 +114,11 @@ function App() {
   }, [isAuthenticated]);
 
   //esta funcion maneja la actualizacion del estado de una incidencia
-  const handleUpdateStatus = async (id: number, newStatus: StatusType, assignedTo?: string) => {
+  const handleUpdateStatus = async (_id: string, newStatus: StatusType) => {
     //actualizamos el estado de la incidencia en el backend
     try {
-      const updatedIncidencia = await updateIncidenciaStatus(id, newStatus, assignedTo);
-      setIncidencias(prev => prev.map(inc => inc.id === updatedIncidencia.id ? updatedIncidencia : inc));
+      const updatedIncidencia = await updateIncidenciaStatus(_id, newStatus);
+      setIncidencias(prev => prev.map(inc => inc._id === updatedIncidencia._id ? updatedIncidencia : inc));
     } catch (error) {
       console.error(error);
     }

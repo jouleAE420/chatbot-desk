@@ -32,10 +32,12 @@ const HomePage: React.FC<Props> = ({
   onStatisticsClick
 }) => {
   const { user } = useAuth();
+    console.log('Usuario logueado:', user); // <-- Añade esta línea
+
   const [pendingAction, setPendingAction] = useState<{ action: () => void; message: React.ReactNode } | null>(null);
 
   const assignees = useMemo(() => 
-    Array.from(new Set(incidencias.map(inc => inc.assignedTo).filter((name): name is string => !!name)))
+    Array.from(new Set(incidencias.flatMap(inc => inc.users || [])))
   , [incidencias]);
 
   const globalColumnState = columnStates.all;
@@ -51,7 +53,7 @@ const HomePage: React.FC<Props> = ({
                 (!filters.parkingId || inc.parkingId === filters.parkingId) &&
                 (!filters.ticketType || inc.ticketType === filters.ticketType) &&
                 (!filters.clientName || inc.clientName.toLowerCase().includes(filters.clientName.toLowerCase())) &&
-                (!filters.assignedTo || inc.assignedTo === filters.assignedTo)
+                (!filters.assignedTo || inc.users?.includes(filters.assignedTo))
             );
         });
     }
@@ -76,11 +78,11 @@ const HomePage: React.FC<Props> = ({
       },
       [StatusType.pending]: {
         title: 'Pendientes',
-        incidencias: processedIncidencias.filter(inc => inc.status === StatusType.pending && (user?.role === 'admin' || user?.role === 'supervisor' || inc.assignedTo === user?.id)).slice(0, 6),
+incidencias: processedIncidencias.filter(inc => inc.status === StatusType.pending && (user?.role === 'admin' || user?.role === 'supervisor' || inc.assignedTo === user?.id)).slice(0, 6),
       },
       [StatusType.in_progress]: {
         title: 'En Progreso',
-        incidencias: processedIncidencias.filter(inc => inc.status === StatusType.in_progress && (user?.role === 'admin' || user?.role === 'supervisor' || inc.assignedTo === user?.id)).slice(0, 4),
+incidencias: processedIncidencias.filter(inc => inc.status === StatusType.in_progress && (user?.role === 'admin' || user?.role === 'supervisor' || inc.users?.includes(user?.id))).slice(0, 4),
       },
       [StatusType.resolved]: {
         title: 'Resueltas',
@@ -98,21 +100,21 @@ const HomePage: React.FC<Props> = ({
     document.body.classList.add('is-dragging');
   };
 
-  const handleUpdateStatusWithConfirmation = (id: number, newStatus: StatusType, currentAssignee?: string) => {
-    const incidence = incidencias.find(inc => inc.id === id);
+  const handleUpdateStatusWithConfirmation = (_id: string, newStatus: StatusType) => {
+    const incidence = incidencias.find(inc => inc._id === _id);
     if (!incidence) return;
 
     const isAssigningFromCreated = incidence.status === StatusType.created && 
                                    (newStatus === StatusType.pending || newStatus === StatusType.in_progress) &&
-                                   !incidence.assignedTo;
+                                   (!incidence.users || incidence.users.length === 0);
 
     if (isAssigningFromCreated) {
       setPendingAction({
-        message: `¿Confirmas que quieres asignarte esta incidencia y moverla a \\\"${newStatus}\\\"?`,
-        action: () => onUpdateStatus(id, newStatus, user?.id)
+        message: `¿Confirmas que quieres asignarte esta incidencia y moverla a \"${newStatus}\"?`,
+        action: () => onUpdateStatus(_id, newStatus, user?.id)
       });
     } else {
-      onUpdateStatus(id, newStatus, currentAssignee);
+      onUpdateStatus(_id, newStatus);
     }
   };
 
@@ -122,8 +124,9 @@ const HomePage: React.FC<Props> = ({
 
     if (!destination || source.droppableId === destination.droppableId) return;
 
-    const incidenceId = Number(draggableId);
-    const movedIncidence = incidencias.find(inc => inc.id === incidenceId);
+    const newStatus = destination.droppableId as StatusType;
+    
+    const movedIncidence = incidencias.find(inc => inc._id === draggableId);
     if (!movedIncidence) return;
 
     // Prevent non-admins from moving resolved incidences
@@ -131,9 +134,7 @@ const HomePage: React.FC<Props> = ({
       return;
     }
 
-    const newStatus = destination.droppableId as StatusType;
-    
-    handleUpdateStatusWithConfirmation(incidenceId, newStatus, movedIncidence.assignedTo);
+    handleUpdateStatusWithConfirmation(draggableId, newStatus);
   };
 
   return (
@@ -175,7 +176,7 @@ const HomePage: React.FC<Props> = ({
                         (!columnFilters.parkingId || inc.parkingId === columnFilters.parkingId) &&
                         (!columnFilters.ticketType || inc.ticketType === columnFilters.ticketType) &&
                         (!columnFilters.clientName || inc.clientName.toLowerCase().includes(columnFilters.clientName.toLowerCase())) &&
-                        (!columnFilters.assignedTo || inc.assignedTo === columnFilters.assignedTo)
+                        (!columnFilters.assignedTo || inc.users?.includes(columnFilters.assignedTo))
                     );
                 });
             }
